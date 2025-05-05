@@ -10,12 +10,10 @@ namespace Vänskap_Api.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        [Required]
         [ForeignKey("Sender")]
         public required string SenderId { get; set; }
         public required ApplicationUser Sender { get; set; }
 
-        [Required]
         [ForeignKey("Receiver")]
         public required string ReceiverId { get; set; }
         public required ApplicationUser Receiver { get; set; }

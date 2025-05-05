@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Vänskap_Api.Data;
 
@@ -11,9 +12,11 @@ using Vänskap_Api.Data;
 namespace Vänskap_Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250429080337_AllowingNullValues")]
+    partial class AllowingNullValues
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,36 +24,6 @@ namespace Vänskap_Api.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("ApplicationUserInterest", b =>
-                {
-                    b.Property<int>("InterestsId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UsersId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("InterestsId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("UserInterests", (string)null);
-                });
-
-            modelBuilder.Entity("EventInterest", b =>
-                {
-                    b.Property<int>("EventsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("InterestsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("EventsId", "InterestsId");
-
-                    b.HasIndex("InterestsId");
-
-                    b.ToTable("EventInterests", (string)null);
-                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -316,10 +289,10 @@ namespace Vänskap_Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AgeRangeMax")
+                    b.Property<int>("AgeRangeMax")
                         .HasColumnType("int");
 
-                    b.Property<int?>("AgeRangeMin")
+                    b.Property<int>("AgeRangeMin")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -332,16 +305,17 @@ namespace Vänskap_Api.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("EndTime")
+                    b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsPublic")
                         .HasColumnType("bit");
 
                     b.Property<string>("Location")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("StartTime")
+                    b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
@@ -357,7 +331,13 @@ namespace Vänskap_Api.Migrations
 
             modelBuilder.Entity("Vänskap_Api.Models.EventParticipant", b =>
                 {
-                    b.Property<string>("UserId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApplicationUserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("EventId")
@@ -370,13 +350,17 @@ namespace Vänskap_Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserName")
+                    b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("UserId", "EventId");
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("EventId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("EventParticipants");
                 });
@@ -453,515 +437,23 @@ namespace Vänskap_Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("EventId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Interests");
+                    b.HasIndex("ApplicationUserId");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Matlagning"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Resor"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Fotografi"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Träning"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Name = "Löpning"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Name = "Vandring"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Name = "Cykling"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Name = "Simning"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Name = "Yoga"
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Name = "Musik"
-                        },
-                        new
-                        {
-                            Id = 11,
-                            Name = "Dans"
-                        },
-                        new
-                        {
-                            Id = 12,
-                            Name = "Måla"
-                        },
-                        new
-                        {
-                            Id = 13,
-                            Name = "Teckna"
-                        },
-                        new
-                        {
-                            Id = 14,
-                            Name = "Skriva"
-                        },
-                        new
-                        {
-                            Id = 15,
-                            Name = "Läsa böcker"
-                        },
-                        new
-                        {
-                            Id = 16,
-                            Name = "Spela gitarr"
-                        },
-                        new
-                        {
-                            Id = 17,
-                            Name = "Spela piano"
-                        },
-                        new
-                        {
-                            Id = 18,
-                            Name = "Programmering"
-                        },
-                        new
-                        {
-                            Id = 19,
-                            Name = "Trädgårdsarbete"
-                        },
-                        new
-                        {
-                            Id = 20,
-                            Name = "Fiske"
-                        },
-                        new
-                        {
-                            Id = 21,
-                            Name = "Jakt"
-                        },
-                        new
-                        {
-                            Id = 22,
-                            Name = "Baka"
-                        },
-                        new
-                        {
-                            Id = 23,
-                            Name = "Mode"
-                        },
-                        new
-                        {
-                            Id = 24,
-                            Name = "Inredning"
-                        },
-                        new
-                        {
-                            Id = 25,
-                            Name = "Filmer"
-                        },
-                        new
-                        {
-                            Id = 26,
-                            Name = "Serier"
-                        },
-                        new
-                        {
-                            Id = 27,
-                            Name = "Podcast"
-                        },
-                        new
-                        {
-                            Id = 28,
-                            Name = "Bilar"
-                        },
-                        new
-                        {
-                            Id = 29,
-                            Name = "Motorcyklar"
-                        },
-                        new
-                        {
-                            Id = 30,
-                            Name = "Djur"
-                        },
-                        new
-                        {
-                            Id = 31,
-                            Name = "Hundar"
-                        },
-                        new
-                        {
-                            Id = 32,
-                            Name = "Katter"
-                        },
-                        new
-                        {
-                            Id = 33,
-                            Name = "Volontärarbete"
-                        },
-                        new
-                        {
-                            Id = 34,
-                            Name = "Aktier"
-                        },
-                        new
-                        {
-                            Id = 35,
-                            Name = "Investeringar"
-                        },
-                        new
-                        {
-                            Id = 36,
-                            Name = "Ekonomi"
-                        },
-                        new
-                        {
-                            Id = 37,
-                            Name = "Historia"
-                        },
-                        new
-                        {
-                            Id = 38,
-                            Name = "Psykologi"
-                        },
-                        new
-                        {
-                            Id = 39,
-                            Name = "Filosofi"
-                        },
-                        new
-                        {
-                            Id = 40,
-                            Name = "Astronomi"
-                        },
-                        new
-                        {
-                            Id = 41,
-                            Name = "Vetenskap"
-                        },
-                        new
-                        {
-                            Id = 42,
-                            Name = "Politik"
-                        },
-                        new
-                        {
-                            Id = 43,
-                            Name = "Miljöfrågor"
-                        },
-                        new
-                        {
-                            Id = 44,
-                            Name = "Debatt"
-                        },
-                        new
-                        {
-                            Id = 45,
-                            Name = "Självutveckling"
-                        },
-                        new
-                        {
-                            Id = 46,
-                            Name = "Meditation"
-                        },
-                        new
-                        {
-                            Id = 47,
-                            Name = "Mindfulness"
-                        },
-                        new
-                        {
-                            Id = 48,
-                            Name = "Skidåkning"
-                        },
-                        new
-                        {
-                            Id = 49,
-                            Name = "Snowboard"
-                        },
-                        new
-                        {
-                            Id = 50,
-                            Name = "Segling"
-                        },
-                        new
-                        {
-                            Id = 51,
-                            Name = "Surfing"
-                        },
-                        new
-                        {
-                            Id = 52,
-                            Name = "Golf"
-                        },
-                        new
-                        {
-                            Id = 53,
-                            Name = "Fotboll"
-                        },
-                        new
-                        {
-                            Id = 54,
-                            Name = "Basket"
-                        },
-                        new
-                        {
-                            Id = 55,
-                            Name = "Tennis"
-                        },
-                        new
-                        {
-                            Id = 56,
-                            Name = "Padel"
-                        },
-                        new
-                        {
-                            Id = 57,
-                            Name = "Baseboll"
-                        },
-                        new
-                        {
-                            Id = 58,
-                            Name = "Esport"
-                        },
-                        new
-                        {
-                            Id = 59,
-                            Name = "Brädspel"
-                        },
-                        new
-                        {
-                            Id = 60,
-                            Name = "Schack"
-                        },
-                        new
-                        {
-                            Id = 61,
-                            Name = "Kortspel"
-                        },
-                        new
-                        {
-                            Id = 62,
-                            Name = "Rollspel"
-                        },
-                        new
-                        {
-                            Id = 63,
-                            Name = "Camping"
-                        },
-                        new
-                        {
-                            Id = 64,
-                            Name = "Roadtrips"
-                        },
-                        new
-                        {
-                            Id = 65,
-                            Name = "Backpacking"
-                        },
-                        new
-                        {
-                            Id = 66,
-                            Name = "Språk"
-                        },
-                        new
-                        {
-                            Id = 67,
-                            Name = "Kultur"
-                        },
-                        new
-                        {
-                            Id = 68,
-                            Name = "Matkultur"
-                        },
-                        new
-                        {
-                            Id = 69,
-                            Name = "Brygga öl"
-                        },
-                        new
-                        {
-                            Id = 70,
-                            Name = "Vinprovning"
-                        },
-                        new
-                        {
-                            Id = 71,
-                            Name = "Cocktails"
-                        },
-                        new
-                        {
-                            Id = 72,
-                            Name = "Kaffe"
-                        },
-                        new
-                        {
-                            Id = 73,
-                            Name = "Teknik"
-                        },
-                        new
-                        {
-                            Id = 74,
-                            Name = "AI"
-                        },
-                        new
-                        {
-                            Id = 75,
-                            Name = "Spelutveckling"
-                        },
-                        new
-                        {
-                            Id = 76,
-                            Name = "Webbutveckling"
-                        },
-                        new
-                        {
-                            Id = 77,
-                            Name = "Mobilappar"
-                        },
-                        new
-                        {
-                            Id = 78,
-                            Name = "Entreprenörskap"
-                        },
-                        new
-                        {
-                            Id = 79,
-                            Name = "Startups"
-                        },
-                        new
-                        {
-                            Id = 80,
-                            Name = "Marknadsföring"
-                        },
-                        new
-                        {
-                            Id = 81,
-                            Name = "Sociala medier"
-                        },
-                        new
-                        {
-                            Id = 82,
-                            Name = "YouTube"
-                        },
-                        new
-                        {
-                            Id = 83,
-                            Name = "Streaming"
-                        },
-                        new
-                        {
-                            Id = 84,
-                            Name = "Standup"
-                        },
-                        new
-                        {
-                            Id = 85,
-                            Name = "Improvisation"
-                        },
-                        new
-                        {
-                            Id = 86,
-                            Name = "Skådespeleri"
-                        },
-                        new
-                        {
-                            Id = 87,
-                            Name = "Teater"
-                        },
-                        new
-                        {
-                            Id = 88,
-                            Name = "Konst"
-                        },
-                        new
-                        {
-                            Id = 89,
-                            Name = "Museer"
-                        },
-                        new
-                        {
-                            Id = 90,
-                            Name = "Arkitektur"
-                        },
-                        new
-                        {
-                            Id = 91,
-                            Name = "Modefotografi"
-                        },
-                        new
-                        {
-                            Id = 92,
-                            Name = "Vintage"
-                        },
-                        new
-                        {
-                            Id = 93,
-                            Name = "Antikviteter"
-                        },
-                        new
-                        {
-                            Id = 94,
-                            Name = "Loppis"
-                        },
-                        new
-                        {
-                            Id = 95,
-                            Name = "Minimalism"
-                        },
-                        new
-                        {
-                            Id = 96,
-                            Name = "Zero waste"
-                        },
-                        new
-                        {
-                            Id = 97,
-                            Name = "DIY-projekt"
-                        },
-                        new
-                        {
-                            Id = 98,
-                            Name = "Snickeri"
-                        },
-                        new
-                        {
-                            Id = 99,
-                            Name = "Keramik"
-                        },
-                        new
-                        {
-                            Id = 100,
-                            Name = "Origami"
-                        });
+                    b.HasIndex("EventId");
+
+                    b.ToTable("Interests");
                 });
 
             modelBuilder.Entity("Vänskap_Api.Models.Message", b =>
@@ -996,36 +488,6 @@ namespace Vänskap_Api.Migrations
                     b.HasIndex("SenderId");
 
                     b.ToTable("Messages");
-                });
-
-            modelBuilder.Entity("ApplicationUserInterest", b =>
-                {
-                    b.HasOne("Vänskap_Api.Models.Interest", null)
-                        .WithMany()
-                        .HasForeignKey("InterestsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Vänskap_Api.Models.ApplicationUser", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("EventInterest", b =>
-                {
-                    b.HasOne("Vänskap_Api.Models.Event", null)
-                        .WithMany()
-                        .HasForeignKey("EventsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Vänskap_Api.Models.Interest", null)
-                        .WithMany()
-                        .HasForeignKey("InterestsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1111,6 +573,10 @@ namespace Vänskap_Api.Migrations
 
             modelBuilder.Entity("Vänskap_Api.Models.EventParticipant", b =>
                 {
+                    b.HasOne("Vänskap_Api.Models.ApplicationUser", null)
+                        .WithMany("EventParticipations")
+                        .HasForeignKey("ApplicationUserId");
+
                     b.HasOne("Vänskap_Api.Models.Event", "Event")
                         .WithMany("EventParticipants")
                         .HasForeignKey("EventId")
@@ -1118,7 +584,7 @@ namespace Vänskap_Api.Migrations
                         .IsRequired();
 
                     b.HasOne("Vänskap_Api.Models.ApplicationUser", "User")
-                        .WithMany("EventParticipations")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -1170,6 +636,17 @@ namespace Vänskap_Api.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Vänskap_Api.Models.Interest", b =>
+                {
+                    b.HasOne("Vänskap_Api.Models.ApplicationUser", null)
+                        .WithMany("Interests")
+                        .HasForeignKey("ApplicationUserId");
+
+                    b.HasOne("Vänskap_Api.Models.Event", null)
+                        .WithMany("Interests")
+                        .HasForeignKey("EventId");
+                });
+
             modelBuilder.Entity("Vänskap_Api.Models.Message", b =>
                 {
                     b.HasOne("Vänskap_Api.Models.Conversation", "Conversation")
@@ -1194,6 +671,8 @@ namespace Vänskap_Api.Migrations
                     b.Navigation("EventParticipations");
 
                     b.Navigation("Friendships");
+
+                    b.Navigation("Interests");
                 });
 
             modelBuilder.Entity("Vänskap_Api.Models.Conversation", b =>
@@ -1206,6 +685,8 @@ namespace Vänskap_Api.Migrations
             modelBuilder.Entity("Vänskap_Api.Models.Event", b =>
                 {
                     b.Navigation("EventParticipants");
+
+                    b.Navigation("Interests");
                 });
 #pragma warning restore 612, 618
         }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Vänskap_Api.Data;
 
@@ -11,9 +12,11 @@ using Vänskap_Api.Data;
 namespace Vänskap_Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250430122602_EventParticipantFix")]
+    partial class EventParticipantFix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -363,6 +366,9 @@ namespace Vänskap_Api.Migrations
                     b.Property<int>("EventId")
                         .HasColumnType("int");
 
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime>("JoinedAt")
                         .HasColumnType("datetime2");
 
@@ -370,11 +376,9 @@ namespace Vänskap_Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("UserId", "EventId");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("EventId");
 
@@ -1111,6 +1115,10 @@ namespace Vänskap_Api.Migrations
 
             modelBuilder.Entity("Vänskap_Api.Models.EventParticipant", b =>
                 {
+                    b.HasOne("Vänskap_Api.Models.ApplicationUser", null)
+                        .WithMany("EventParticipations")
+                        .HasForeignKey("ApplicationUserId");
+
                     b.HasOne("Vänskap_Api.Models.Event", "Event")
                         .WithMany("EventParticipants")
                         .HasForeignKey("EventId")
@@ -1118,7 +1126,7 @@ namespace Vänskap_Api.Migrations
                         .IsRequired();
 
                     b.HasOne("Vänskap_Api.Models.ApplicationUser", "User")
-                        .WithMany("EventParticipations")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
