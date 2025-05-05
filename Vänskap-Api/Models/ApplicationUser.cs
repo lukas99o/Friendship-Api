@@ -5,15 +5,9 @@ namespace Vänskap_Api.Models
 {
     public class ApplicationUser : IdentityUser
     {
-        [Required]
         public required string FirstName { get; set; }
-
-        [Required]
         public required string LastName { get; set; }
-
-        [Required]
         public DateTime DateOfBirth { get; set; }
-
         public ICollection<Interest>? Interests { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow; 
 

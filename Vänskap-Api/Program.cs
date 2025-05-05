@@ -1,13 +1,18 @@
 
 using DotNetEnv;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Vänskap_Api.Data;
+using Vänskap_Api.Models;
+using Vänskap_Api.Service;
+using Vänskap_Api.Service.IService;
+using Vänskap_Api.Utilities;
 
 namespace Vänskap_Api
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
             Env.Load();
@@ -18,6 +23,11 @@ namespace Vänskap_Api
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Environment.GetEnvironmentVariable("ConnectionString")));
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>().
+                AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+                
+
+            builder.Services.AddScoped<IEventService, EventService>();
 
             var app = builder.Build();
 
@@ -34,7 +44,13 @@ namespace Vänskap_Api
 
             app.MapControllers();
 
-            app.Run();
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                await SeedData.SeedAdminAsync(services);
+            }
+
+            await app.RunAsync();
         }
     }
 }

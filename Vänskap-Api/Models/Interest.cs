@@ -7,7 +7,8 @@ namespace Vänskap_Api.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
         public required string Name { get; set; }
+        public ICollection<Event>? Events { get; set; }
+        public ICollection<ApplicationUser>? Users { get; set; }
     }
 }
