@@ -8,7 +8,8 @@ namespace Vänskap_Api.Models
         public int Id { get; set; }
 
         public required string Name { get; set; }
-        public ICollection<Event>? Events { get; set; }
-        public ICollection<ApplicationUser>? Users { get; set; }
+
+        public ICollection<Event> Events { get; set; } = new List<Event>();
+        public ICollection<ApplicationUser> Users { get; set; } = new List<ApplicationUser>();
     }
 }

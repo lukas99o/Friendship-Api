@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Sprache;
+using System.Security.Claims;
 using Vänskap_Api.Data;
 using Vänskap_Api.Models;
 using Vänskap_Api.Models.Dtos.Event;
@@ -10,10 +11,14 @@ namespace Vänskap_Api.Service
     public class EventService : IEventService
     {
         private readonly ApplicationDbContext _context;
+        private readonly IHttpContextAccessor _contextAccessor;
+        private string UserId => _contextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? throw new ArgumentNullException(nameof(UserId));
+        private string UserName => _contextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? throw new ArgumentNullException(nameof(UserName)); 
 
-        public EventService(ApplicationDbContext context)
+        public EventService(ApplicationDbContext context, IHttpContextAccessor contextAssessor)
         {
             _context = context;
+            _contextAccessor = contextAssessor;
         }
 
         public async Task<ReadEventDto> CreateEvent(EventDto createEvent)
@@ -27,15 +32,12 @@ namespace Vänskap_Api.Service
                     .ToListAsync();
             }
 
-            if (createEvent.StartTime == null) createEvent.StartTime = DateTime.Now;
-            if (createEvent.EndTime == null) createEvent.EndTime = DateTime.Now.AddDays(1);
-
             var createObj = new Event()
             {
                 Title = createEvent.Title,
                 Description = createEvent.Description,
                 StartTime = createEvent.StartTime,
-                CreatedByUserId = createEvent.UserId,
+                CreatedByUserId = UserId,
                 EndTime = createEvent.EndTime,
                 AgeRangeMax = createEvent.AgeRangeMax,
                 AgeRangeMin = createEvent.AgeRangeMin,
@@ -50,8 +52,7 @@ namespace Vänskap_Api.Service
             var eventParticipant = new EventParticipant()
             {
                 Role = "Host",
-                UserName = "Admin",
-                UserId = createEvent.UserId,
+                UserId = UserId,
                 EventId = createObj.Id
             };
 
@@ -63,7 +64,7 @@ namespace Vänskap_Api.Service
             var eventParticiantList = new List<EventParticipantDto>();
             var eventParticipantDto = new EventParticipantDto()
             {
-                UserName = eventParticipant.UserName,
+                UserName = UserName,
                 Role = eventParticipant.Role,
             };
             eventParticiantList.Add(eventParticipantDto);
@@ -105,7 +106,7 @@ namespace Vänskap_Api.Service
                 Interests = r.Interests?.Select(i => i.Name).ToList(),
                 EventParticipants = r.EventParticipants.Select(p => new EventParticipantDto
                 {
-                    UserName = p.UserName,
+                    UserName = UserName,
                     Role = p.Role,
                 }).ToList(),
                 IsPublic = r.IsPublic
@@ -136,7 +137,7 @@ namespace Vänskap_Api.Service
                 Interests = result.Interests?.Select(i => i.Name).ToList(),
                 EventParticipants = result.EventParticipants.Select(p => new EventParticipantDto
                 {
-                    UserName = p.UserName,
+                    UserName = UserName,
                     Role = p.Role,
                 }).ToList(),
                 IsPublic = result.IsPublic
@@ -161,7 +162,7 @@ namespace Vänskap_Api.Service
                     .ToListAsync();
             }
 
-            evnt.CreatedByUserId = updateEvent.UserId;
+            evnt.CreatedByUserId = UserId;
             evnt.Title = updateEvent.Title;
             evnt.Description = updateEvent.Description;
             evnt.Location = updateEvent.Location;
@@ -169,8 +170,8 @@ namespace Vänskap_Api.Service
             evnt.AgeRangeMin = updateEvent.AgeRangeMin;
             evnt.IsPublic = updateEvent.IsPublic;
             evnt.Interests = currentinterests;
-            if (updateEvent.StartTime != null) evnt.StartTime = updateEvent.StartTime;
-            if (updateEvent.EndTime != null) evnt.EndTime = updateEvent.EndTime;
+            evnt.StartTime = updateEvent.StartTime;
+            evnt.EndTime = updateEvent.EndTime;
 
             _context.Update(evnt);
             await _context.SaveChangesAsync();

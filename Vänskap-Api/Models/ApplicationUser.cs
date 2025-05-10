@@ -11,8 +11,8 @@ namespace Vänskap_Api.Models
         public ICollection<Interest>? Interests { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public ICollection<Event>? CreatedEvents { get; set; }
-        public ICollection<EventParticipant>? EventParticipations { get; set; }
-        public ICollection<Friendship>? Friendships { get; set; }
+        public ICollection<Event> CreatedEvents { get; set; } = new List<Event>();
+        public ICollection<EventParticipant> EventParticipations { get; set; } = new List<EventParticipant>();
+        public ICollection<Friendship> Friendships { get; set; } = new List<Friendship>();
     }
 }

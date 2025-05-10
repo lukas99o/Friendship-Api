@@ -5,9 +5,6 @@ namespace Vänskap_Api.Models.Dtos.Event
     public class EventDto
     {
         [Required]
-        public required string UserId { get; set; }
-
-        [Required]
         [StringLength(50)]
         public required string Title { get; set; }
 
@@ -17,8 +14,8 @@ namespace Vänskap_Api.Models.Dtos.Event
         [StringLength(1000)]
         public string? Description { get; set; }
 
-        public DateTime? StartTime { get; set; } 
-        public DateTime? EndTime { get; set; } 
+        public DateTime StartTime { get; set; } = DateTime.Now;
+        public DateTime EndTime { get; set; } = DateTime.Now.AddDays(1);
         public string? Location { get; set; }
         public int? AgeRangeMin { get; set; }
         public int? AgeRangeMax { get; set; }

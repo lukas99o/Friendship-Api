@@ -24,6 +24,7 @@ namespace Vänskap_Api
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             builder.Services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Friendship-Api", Version = "v1" });
@@ -75,6 +76,7 @@ namespace Vänskap_Api
             });
 
             builder.Services.AddScoped<IEventService, EventService>();
+            builder.Services.AddScoped<IFriendshipService, FriendshipService>();
 
             var app = builder.Build();
 
