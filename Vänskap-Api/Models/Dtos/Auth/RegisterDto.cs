@@ -7,23 +7,23 @@ namespace Vänskap_Api.Models.Dtos.User
     {
         [Required]
         [EmailAddress]
-        public string? Email { get; set; }
+        public required string Email { get; set; }
 
         [Required]
         [StringLength(72, MinimumLength = 8, ErrorMessage = "Password must be over 8 characters long.")]
-        public string? Password { get; set; }
+        public required string Password { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string? UserName { get; set; }
+        public required string UserName { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string? FirstName { get; set; }
+        public required string FirstName { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string? LastName { get; set; }
+        public required string LastName { get; set; }
 
         [Required]
         public DateTime DateOfBirth { get; set; }

@@ -5,8 +5,9 @@ namespace Vänskap_Api.Models
 {
     public class EventParticipant
     {
-        public DateTime JoinedAt { get; set; } = DateTime.UtcNow;
-        public required string UserName { get; set; }
+        [Key]
+        public int Id { get; set; }
+        public DateTime JoinedAt { get; set; } = DateTime.Now;
         public string Role { get; set; } = "Participant";
 
         public required string UserId { get; set; }

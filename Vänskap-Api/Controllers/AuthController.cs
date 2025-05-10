@@ -14,28 +14,32 @@ namespace Vänskap_Api.Controllers
     public class AuthController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AuthController(UserManager<ApplicationUser> userManager)
+        public AuthController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginDto login)
         {
-            var user = await _userManager.FindByEmailAsync(login.Email!);
-            if (user == null || !await _userManager.CheckPasswordAsync(user, login.Password!))
+            var user = await _userManager.FindByEmailAsync(login.Email);
+ 
+            if (user == null || !await _userManager.CheckPasswordAsync(user, login.Password) || string.IsNullOrEmpty(user.UserName))
                 return Unauthorized();
             var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
 
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Email, user.Email!),
+                new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Role, isAdmin ? "Admin" : "User")
             };
 
-            var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("JwtKey")!));
+            var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("JwtKey") ?? throw new InvalidOperationException("JwtKey enviroment variable is not set.")));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
@@ -56,12 +60,13 @@ namespace Vänskap_Api.Controllers
             {
                 Email = register.Email,
                 UserName = register.UserName,
-                FirstName = register.FirstName!,
-                LastName = register.LastName!,
+                FirstName = register.FirstName,
+                LastName = register.LastName,
                 DateOfBirth = register.DateOfBirth
             };
 
-            var result = await _userManager.CreateAsync(user, register.Password!);
+            var result = await _userManager.CreateAsync(user, register.Password);
+            await _userManager.AddToRoleAsync(user, "User");
 
             if (!result.Succeeded)
             {

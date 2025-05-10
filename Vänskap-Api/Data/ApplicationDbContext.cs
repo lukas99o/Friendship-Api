@@ -59,9 +59,6 @@ namespace Vänskap_Api.Data
                 .UsingEntity(j => j.ToTable("EventInterests"));
 
             builder.Entity<EventParticipant>()
-                .HasKey(ep => new { ep.UserId, ep.EventId });
-
-            builder.Entity<EventParticipant>()
                 .HasOne(ep => ep.User)
                 .WithMany(u => u.EventParticipations)
                 .HasForeignKey(ep => ep.UserId)
@@ -174,6 +171,10 @@ namespace Vänskap_Api.Data
                 new Interest { Id = 98, Name = "Snickeri" },
                 new Interest { Id = 99, Name = "Keramik" },
                 new Interest { Id = 100, Name = "Origami" }
+            );
+
+            builder.Entity<ApplicationUser>().HasData(
+
             );
         }
     }

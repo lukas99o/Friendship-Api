@@ -9,15 +9,16 @@ namespace Vänskap_Api.Models
         public int Id { get; set; }
 
         public required string Title { get; set; }
-        public string? Description { get; set; }
-        public DateTime? StartTime { get; set; } = DateTime.Now;
-        public DateTime? EndTime { get; set; } = DateTime.Now.AddDays(1);
+        public string? Description { get; set; }       
         public string? Location { get; set; }
         public int? AgeRangeMin { get; set; }
         public int? AgeRangeMax { get; set; }
-        public ICollection<Interest>? Interests { get; set; }
         public bool IsPublic { get; set; }
+        public DateTime StartTime { get; set; } = DateTime.Now;
+        public DateTime EndTime { get; set; } = DateTime.Now.AddDays(1);
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public ICollection<Interest>? Interests { get; set; } = new List<Interest>();
         public ICollection<EventParticipant> EventParticipants { get; set; } = new List<EventParticipant>();
 
         [ForeignKey("CreatedByUser")]

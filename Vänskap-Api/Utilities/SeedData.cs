@@ -18,6 +18,11 @@ namespace Vänskap_Api.Utilities
                 await roleManager.CreateAsync(new IdentityRole("Admin"));
             }
 
+            if (!await roleManager.RoleExistsAsync("User"))
+            {
+                await roleManager.CreateAsync(new IdentityRole("User"));
+            }
+
             var adminUser = await userManager.FindByEmailAsync(adminEmail);
             if (adminUser == null)
             {

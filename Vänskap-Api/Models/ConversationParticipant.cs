@@ -7,10 +7,15 @@ namespace Vänskap_Api.Models
     {
         [Key]
         public int Id { get; set; }
-        public required Conversation Conversation { get; set; } 
+        public DateTime JoinedAt { get; set; } = DateTime.Now;
+        public string Role { get; set; } = "Participant";
+
+        [ForeignKey("Conversation")]
+        public int ConversationId { get; set; }
+        public Conversation? Conversation { get; set; } 
 
         [ForeignKey("User")]
         public required string UserId { get; set; }
-        public required ApplicationUser User { get; set; } 
+        public ApplicationUser? User { get; set; } 
     }
 }
