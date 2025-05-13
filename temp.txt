@@ -12,6 +12,22 @@ LÄGG TILL CORS FÖR FRONTEND
 
 {
   "email": "alex.svensson@example.com",
+  "password": "StarkLösen456#"
+}
+
+admin
+
+
+alexs
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJhbGV4LnN2ZW5zc29uQGV4YW1wbGUuY29tIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZSI6ImFsZXhzIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiI4OWZmZjAzMC1iZTVjLTQwYTItOTAzZC04MmY1YzZmZmVmNmEiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwiZXhwIjoxNzQ3MDY2MzQyLCJpc3MiOiJodHRwczovL2xvY2FsaG9zdDo3MTA2IiwiYXVkIjoibXlGcmllbmRzaGlwQXBwQXVkaWVuY2UifQ.xc7N_8hXxLjjWY4ngSKBCGBQJ96tSxxsxerMMc5xNrU
+
+
+
+
+
+
+{
+  "email": "alex.svensson@example.com",
   "password": "StarkLösen456#",
   "userName": "alexs",
   "firstName": "Alex",
