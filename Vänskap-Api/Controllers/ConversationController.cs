@@ -29,7 +29,9 @@ namespace Vänskap_Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<string>>> SeeAllConversations()
         {
-            return Ok(await _conversationService.SeeAllConversations());
+            var result = await _conversationService.SeeAllConversations();
+
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
@@ -62,7 +64,7 @@ namespace Vänskap_Api.Controllers
         // In this endpoint it is optional to add the second paramter because if the user has atlest one host
         // or is not host themselves they should be able to leave without the second paramter but if they are
         // the alone host they have to provide 1 or more hosts before they leave.
-        [HttpDelete("removeuser{id}")]
+        [HttpDelete("removeuser/{id}")]
         public async Task<IActionResult> RemoveUrselfFromConversation(int id, List<string?> userNames)
         {
             var result = await _conversationService.RemoveUrselfFromConversation(id, userNames);

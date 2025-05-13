@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Vänskap_Api.Data;
 
@@ -11,9 +12,11 @@ using Vänskap_Api.Data;
 namespace Vänskap_Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250512144312_FixingBugs")]
+    partial class FixingBugs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -985,11 +988,18 @@ namespace Vänskap_Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ConversationId")
+                    b.Property<int>("ConversationId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("PrivateConversationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ReadAts")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SenderId")
                         .IsRequired()
@@ -999,12 +1009,14 @@ namespace Vänskap_Api.Migrations
 
                     b.HasIndex("ConversationId");
 
+                    b.HasIndex("PrivateConversationId");
+
                     b.HasIndex("SenderId");
 
                     b.ToTable("Messages");
                 });
 
-            modelBuilder.Entity("Vänskap_Api.Models.MessageReadAt", b =>
+            modelBuilder.Entity("Vänskap_Api.Models.PrivateConversation", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1012,22 +1024,13 @@ namespace Vänskap_Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("MessageId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("ReadAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MessageId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("MessageReadAt");
+                    b.ToTable("PrivateConversation");
                 });
 
             modelBuilder.Entity("ApplicationUserInterest", b =>
@@ -1206,7 +1209,15 @@ namespace Vänskap_Api.Migrations
                 {
                     b.HasOne("Vänskap_Api.Models.Conversation", "Conversation")
                         .WithMany("Messages")
-                        .HasForeignKey("ConversationId");
+                        .HasForeignKey("ConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Vänskap_Api.Models.PrivateConversation", "PrivateConversation")
+                        .WithMany("Messages")
+                        .HasForeignKey("PrivateConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Vänskap_Api.Models.ApplicationUser", "Sender")
                         .WithMany()
@@ -1216,24 +1227,9 @@ namespace Vänskap_Api.Migrations
 
                     b.Navigation("Conversation");
 
+                    b.Navigation("PrivateConversation");
+
                     b.Navigation("Sender");
-                });
-
-            modelBuilder.Entity("Vänskap_Api.Models.MessageReadAt", b =>
-                {
-                    b.HasOne("Vänskap_Api.Models.Message", "Message")
-                        .WithMany("ReadAts")
-                        .HasForeignKey("MessageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Vänskap_Api.Models.ApplicationUser", "User")
-                        .WithMany("ReadMessages")
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("Message");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Vänskap_Api.Models.ApplicationUser", b =>
@@ -1243,8 +1239,6 @@ namespace Vänskap_Api.Migrations
                     b.Navigation("EventParticipations");
 
                     b.Navigation("Friendships");
-
-                    b.Navigation("ReadMessages");
                 });
 
             modelBuilder.Entity("Vänskap_Api.Models.Conversation", b =>
@@ -1259,9 +1253,9 @@ namespace Vänskap_Api.Migrations
                     b.Navigation("EventParticipants");
                 });
 
-            modelBuilder.Entity("Vänskap_Api.Models.Message", b =>
+            modelBuilder.Entity("Vänskap_Api.Models.PrivateConversation", b =>
                 {
-                    b.Navigation("ReadAts");
+                    b.Navigation("Messages");
                 });
 #pragma warning restore 612, 618
         }

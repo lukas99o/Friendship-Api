@@ -1,4 +1,5 @@
-﻿using Vänskap_Api.Models.Dtos.User;
+﻿using Vänskap_Api.Models.Dtos.Friend;
+using Vänskap_Api.Models.Dtos.User;
 
 namespace Vänskap_Api.Service.IService
 {
@@ -6,7 +7,7 @@ namespace Vänskap_Api.Service.IService
     {
         Task<IEnumerable<string?>> SeeFriendList();
         Task<bool> SendFriendRequest(string userName);
-        Task<(IEnumerable<string?> IncomingRequests, IEnumerable<string?> OutgoingRequests)> SeeFriendRequests();
+        Task<GetFriendRequestsDto> SeeFriendRequests();
         Task<bool> AcceptFriendRequest(int id);
         Task<bool> DeclineFriendRequest(int id);
         Task<bool> RemoveFriend(string friendId);

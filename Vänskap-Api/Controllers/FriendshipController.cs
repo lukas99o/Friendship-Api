@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Vänskap_Api.Models.Dtos.Friend;
 using Vänskap_Api.Models.Dtos.User;
 using Vänskap_Api.Service.IService;
 
@@ -17,22 +18,7 @@ namespace Vänskap_Api.Controllers
             _friendshipService = friendshipService;
         }
 
-        [HttpGet("friends")]
-        public async Task<ActionResult<IEnumerable<string>>> SeeFriendList()
-        {
-            return Ok(await _friendshipService.SeeFriendList());
-        }
-
-        [HttpDelete("friends/{id}")]
-        public async Task<IActionResult> RemoveFriend(string userName)
-        {
-            var result = await _friendshipService.RemoveFriend(userName);
-            if (!result) return BadRequest(result);
-
-            return Ok(result);
-        }
-
-        [HttpPost("friendrequests")]
+        [HttpPost("sendfriendrequest")]
         public async Task<IActionResult> SendFriendRequest(string userName)
         {
             var result = await _friendshipService.SendFriendRequest(userName);
@@ -41,7 +27,7 @@ namespace Vänskap_Api.Controllers
             return Ok("Success");
         }
 
-        [HttpPost("friendrequests/{id}")]
+        [HttpPost("acceptfriendrequest/{id}")]
         public async Task<IActionResult> AcceptFriendRequest(int id)
         {
             var result = await _friendshipService.AcceptFriendRequest(id);
@@ -50,7 +36,28 @@ namespace Vänskap_Api.Controllers
             return Ok("Accepted friend request.");
         }
 
-        [HttpDelete("friendrequests/{id}")]
+        [HttpGet("friends")]
+        public async Task<ActionResult<IEnumerable<string>>> SeeFriendList()
+        {
+            return Ok(await _friendshipService.SeeFriendList());
+        }
+
+        [HttpGet("friendrequests")]
+        public async Task<ActionResult<GetFriendRequestsDto>> SeeFriendRequests()
+        {
+            return Ok(await _friendshipService.SeeFriendRequests());
+        }
+
+        [HttpDelete("removefriend/{id}")]
+        public async Task<IActionResult> RemoveFriend(string userName)
+        {
+            var result = await _friendshipService.RemoveFriend(userName);
+            if (!result) return BadRequest(result);
+
+            return Ok(result);
+        }
+
+        [HttpDelete("declinefriendrequest/{id}")]
         public async Task<IActionResult> DeclineFriendRequest(int id)
         {
             var result = await _friendshipService.DeclineFriendRequest(id);
@@ -59,25 +66,13 @@ namespace Vänskap_Api.Controllers
             return Ok(result);
         }
 
-        [HttpDelete("friendrequests/regretrequest/{id}")]
+        [HttpDelete("regretfriendrequest/{id}")]
         public async Task<IActionResult> RemoveFriendRequest(int id)
         {
             var result = await _friendshipService.RemoveFriendRequest(id);
             if (!result) return BadRequest();
 
             return Ok(result);
-        }
-
-        [HttpGet("friendrequests")]
-        public async Task<ActionResult<FriendRequestDto>> SeeFriendRequests()
-        {
-            var (incoming, outgoing) = await _friendshipService.SeeFriendRequests();
-
-            return Ok(new FriendRequestDto
-            {
-                IncomingRequests = incoming,
-                OutgoingRequests = outgoing
-            });
         }
     }
 }
