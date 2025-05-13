@@ -33,15 +33,15 @@ namespace Vänskap_Api.Service
             var allAreFriends = userNames.All(u => friendUserNames.Contains(u));
             if (!allAreFriends) return false;
 
-            var friendNames = user.Friendships.Select(f => $"{f.Friend?.FirstName} {f.Friend?.LastName}").ToList();
+            var friendNames = user.Friendships.Select(f => f.Friend?.FirstName).ToList();
             var friends = user.Friendships.ToList();
 
             if (friends.Count > 0)
             {
-                if (!string.IsNullOrEmpty(friendNames.ToString()))
+                if (friendNames.Count() > 0)
                 {
                     var participants = new List<ConversationParticipant>();
-                    var conversation = new Conversation() { Title = friendNames.ToString()! };
+                    var conversation = new Conversation() { Title = $"{user.FirstName}, {string.Join(", ", friendNames)}" };
 
                     await _context.AddAsync(conversation);
                     await _context.SaveChangesAsync();
@@ -73,6 +73,7 @@ namespace Vänskap_Api.Service
         public async Task<IEnumerable<string>> SeeAllConversations()
         {
             var userConversations = await _context.Conversations
+                .Include(c => c.ConversationParticipants)
                 .Where(c => c.ConversationParticipants.Any(cp => cp.UserId == UserId))
                 .Select(c => c.Title)
                 .ToListAsync();

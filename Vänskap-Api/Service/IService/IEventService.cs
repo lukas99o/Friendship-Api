@@ -1,5 +1,4 @@
-﻿using Vänskap_Api.Models;
-using Vänskap_Api.Models.Dtos.Event;
+﻿using Vänskap_Api.Models.Dtos.Event;
 
 namespace Vänskap_Api.Service.IService
 {

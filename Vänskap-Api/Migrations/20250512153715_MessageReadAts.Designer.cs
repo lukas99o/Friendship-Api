@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Vänskap_Api.Data;
 
@@ -11,9 +12,11 @@ using Vänskap_Api.Data;
 namespace Vänskap_Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250512153715_MessageReadAts")]
+    partial class MessageReadAts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -985,11 +988,14 @@ namespace Vänskap_Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ConversationId")
+                    b.Property<int>("ConversationId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("PrivateConversationId")
+                        .HasColumnType("int");
 
                     b.Property<string>("SenderId")
                         .IsRequired()
@@ -998,6 +1004,8 @@ namespace Vänskap_Api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ConversationId");
+
+                    b.HasIndex("PrivateConversationId");
 
                     b.HasIndex("SenderId");
 
@@ -1028,6 +1036,23 @@ namespace Vänskap_Api.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("MessageReadAt");
+                });
+
+            modelBuilder.Entity("Vänskap_Api.Models.PrivateConversation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PrivateConversation");
                 });
 
             modelBuilder.Entity("ApplicationUserInterest", b =>
@@ -1206,7 +1231,15 @@ namespace Vänskap_Api.Migrations
                 {
                     b.HasOne("Vänskap_Api.Models.Conversation", "Conversation")
                         .WithMany("Messages")
-                        .HasForeignKey("ConversationId");
+                        .HasForeignKey("ConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Vänskap_Api.Models.PrivateConversation", "PrivateConversation")
+                        .WithMany("Messages")
+                        .HasForeignKey("PrivateConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Vänskap_Api.Models.ApplicationUser", "Sender")
                         .WithMany()
@@ -1215,6 +1248,8 @@ namespace Vänskap_Api.Migrations
                         .IsRequired();
 
                     b.Navigation("Conversation");
+
+                    b.Navigation("PrivateConversation");
 
                     b.Navigation("Sender");
                 });
@@ -1262,6 +1297,11 @@ namespace Vänskap_Api.Migrations
             modelBuilder.Entity("Vänskap_Api.Models.Message", b =>
                 {
                     b.Navigation("ReadAts");
+                });
+
+            modelBuilder.Entity("Vänskap_Api.Models.PrivateConversation", b =>
+                {
+                    b.Navigation("Messages");
                 });
 #pragma warning restore 612, 618
         }

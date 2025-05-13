@@ -14,5 +14,6 @@ namespace Vänskap_Api.Models
         public ICollection<Event> CreatedEvents { get; set; } = new List<Event>();
         public ICollection<EventParticipant> EventParticipations { get; set; } = new List<EventParticipant>();
         public ICollection<Friendship> Friendships { get; set; } = new List<Friendship>();
+        public ICollection<MessageReadAt> ReadMessages { get; set; } = new List<MessageReadAt>();
     }
 }

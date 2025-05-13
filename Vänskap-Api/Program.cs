@@ -77,6 +77,7 @@ namespace Vänskap_Api
 
             builder.Services.AddScoped<IEventService, EventService>();
             builder.Services.AddScoped<IFriendshipService, FriendshipService>();
+            builder.Services.AddScoped<IConversationService, ConversationService>();
 
             var app = builder.Build();
 

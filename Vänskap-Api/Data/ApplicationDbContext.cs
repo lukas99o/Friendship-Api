@@ -70,6 +70,17 @@ namespace Vänskap_Api.Data
                 .HasForeignKey(ep => ep.EventId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            //builder.Entity<MessageReadAt>()
+            //    .HasOne(mr => mr.Message)
+            //    .WithMany(m => m.ReadAts)
+            //    .HasForeignKey(mr => mr.MessageId);
+
+            //builder.Entity<MessageReadAt>()
+            //    .HasOne(mr => mr.User)
+            //    .WithMany(u => u.ReadMessages)
+            //    .HasForeignKey(mr => mr.UserId)
+            //    .OnDelete(DeleteBehavior.Cascade);
+
             builder.Entity<Interest>().HasData(
                 new Interest { Id = 1, Name = "Matlagning" },
                 new Interest { Id = 2, Name = "Resor" },
@@ -171,10 +182,6 @@ namespace Vänskap_Api.Data
                 new Interest { Id = 98, Name = "Snickeri" },
                 new Interest { Id = 99, Name = "Keramik" },
                 new Interest { Id = 100, Name = "Origami" }
-            );
-
-            builder.Entity<ApplicationUser>().HasData(
-
             );
         }
     }
