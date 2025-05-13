@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using Sprache;
 using System.Security.Claims;
 using Vänskap_Api.Data;
@@ -23,6 +24,7 @@ namespace Vänskap_Api.Service
 
         public async Task<ReadEventDto> CreateEvent(EventDto createEvent)
         {
+            var user = await _context.Users.FindAsync(UserId);
             var interests = new List<Interest>();
 
             if (createEvent.Interests != null)
@@ -59,6 +61,7 @@ namespace Vänskap_Api.Service
             createObj.EventParticipants.Add(eventParticipant);
             _context.Events.Update(createObj);
             await _context.EventParticipants.AddAsync(eventParticipant);
+            user?.CreatedEvents.Add(createObj);
             await _context.SaveChangesAsync();
 
             var eventParticiantList = new List<EventParticipantDto>();
@@ -88,10 +91,10 @@ namespace Vänskap_Api.Service
             return evnt;
         }
 
-        public async Task<IEnumerable<ReadEventDto>> ReadAllEvents()
+        public async Task<IEnumerable<ReadEventDto>> ReadAllPublicEvents(List<string?> interests, int ageMin, int ageMax)
         {
-            var result = await _context.Events.Include(i => i.Interests).Include(e => e.EventParticipants).ToListAsync();
-
+            var result = await _context.Events.Include(i => i.Interests).Include(e => e.EventParticipants).Where(e => e.IsPublic == true).ToListAsync();
+            
             var eventList = result.Select(r => new ReadEventDto
             {
                 EventId = r.Id,
@@ -115,6 +118,40 @@ namespace Vänskap_Api.Service
             return eventList;
         }
 
+        public async Task<IEnumerable<ReadEventDto>> GetAllFriendEvents()
+        {
+            var friendIds = await _context.Friendships
+                .Where(f => f.UserId == UserId)
+                .Select(f => f.FriendId)
+                .ToListAsync();
+
+            var events = await _context.Events
+                .Where(e => friendIds.Contains(e.CreatedByUserId))
+                .ToListAsync();
+
+            var eventList = events.Select(e => new ReadEventDto
+            {
+                EventId = e.Id,
+                UserId = e.CreatedByUserId,
+                Title = e.Title,
+                Description = e.Description,
+                StartTime = e.StartTime,
+                EndTime = e.EndTime,
+                Location = e.Location,
+                AgeRangeMax = e.AgeRangeMax,
+                AgeRangeMin = e.AgeRangeMin,
+                Interests = e.Interests?.Select(i => i.Name).ToList(),
+                EventParticipants = e.EventParticipants.Select(p => new EventParticipantDto
+                {
+                    UserName = UserName,
+                    Role = p.Role,
+                }).ToList(),
+                IsPublic = e.IsPublic
+            }).ToList();
+
+            return eventList;
+        }
+
         public async Task<ReadEventDto?> ReadEvent(int id)
         {
             var result = await _context.Events
@@ -123,27 +160,62 @@ namespace Vänskap_Api.Service
                 .FirstOrDefaultAsync(e => e.Id == id);
             if (result == null) return null;
 
-            var evnt = new ReadEventDto()
+            if (result.IsPublic)
             {
-                EventId = result.Id,
-                UserId = result.CreatedByUserId,
-                Title = result.Title,
-                Description = result.Description,
-                StartTime = result.StartTime,
-                EndTime = result.EndTime,
-                Location = result.Location,
-                AgeRangeMax = result.AgeRangeMax,
-                AgeRangeMin = result.AgeRangeMin,
-                Interests = result.Interests?.Select(i => i.Name).ToList(),
-                EventParticipants = result.EventParticipants.Select(p => new EventParticipantDto
+                var evnt = new ReadEventDto()
                 {
-                    UserName = UserName,
-                    Role = p.Role,
-                }).ToList(),
-                IsPublic = result.IsPublic
-            };
+                    EventId = result.Id,
+                    UserId = result.CreatedByUserId,
+                    Title = result.Title,
+                    Description = result.Description,
+                    StartTime = result.StartTime,
+                    EndTime = result.EndTime,
+                    Location = result.Location,
+                    AgeRangeMax = result.AgeRangeMax,
+                    AgeRangeMin = result.AgeRangeMin,
+                    Interests = result.Interests?.Select(i => i.Name).ToList(),
+                    EventParticipants = result.EventParticipants.Select(p => new EventParticipantDto
+                    {
+                        UserName = UserName,
+                        Role = p.Role,
+                    }).ToList(),
+                    IsPublic = result.IsPublic
+                };
 
-            return evnt;
+                return evnt;
+            }
+            else
+            {
+                var eventOwnerId = result.CreatedByUserId;
+                var isFriend = await _context.Friendships.AnyAsync(f => 
+                    (f.UserId == UserId && f.FriendId == eventOwnerId) ||
+                    (f.FriendId == UserId && f.UserId == eventOwnerId)
+                );
+
+                if (!isFriend) return null;
+
+                var evnt = new ReadEventDto()
+                {
+                    EventId = result.Id,
+                    UserId = result.CreatedByUserId,
+                    Title = result.Title,
+                    Description = result.Description,
+                    StartTime = result.StartTime,
+                    EndTime = result.EndTime,
+                    Location = result.Location,
+                    AgeRangeMax = result.AgeRangeMax,
+                    AgeRangeMin = result.AgeRangeMin,
+                    Interests = result.Interests?.Select(i => i.Name).ToList(),
+                    EventParticipants = result.EventParticipants.Select(p => new EventParticipantDto
+                    {
+                        UserName = UserName,
+                        Role = p.Role,
+                    }).ToList(),
+                    IsPublic = result.IsPublic
+                };
+
+                return evnt;
+            }
         }
 
         public async Task<bool> UpdateEvent(int id, EventDto updateEvent)
