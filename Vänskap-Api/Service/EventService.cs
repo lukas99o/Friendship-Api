@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using Sprache;
 using System.Security.Claims;
@@ -91,10 +92,35 @@ namespace Vänskap_Api.Service
             return evnt;
         }
 
-        public async Task<IEnumerable<ReadEventDto>> ReadAllPublicEvents(List<string?> interests, int ageMin, int ageMax)
+        public async Task<IEnumerable<ReadEventDto>> ReadAllPublicEvents(List<string?> interests, int? ageMin, int? ageMax)
         {
-            var result = await _context.Events.Include(i => i.Interests).Include(e => e.EventParticipants).Where(e => e.IsPublic == true).ToListAsync();
+            var query = _context.Events
+                .Include(e => e.EventParticipants)
+                .Include(e => e.Interests)
+                .Where(e => e.IsPublic);
             
+            if (ageMin != null && ageMax != null)
+            {
+                if (ageMin > ageMax) return new List<ReadEventDto>();
+
+                query = query.Where(e => e.AgeRangeMax >= ageMin && e.AgeRangeMin <= ageMax);
+            }
+            else if (ageMin != null)
+            {
+                query = query.Where(e => e.AgeRangeMax >= ageMin);
+            }
+            else if (ageMax != null)
+            {
+                query = query.Where(e => e.AgeRangeMin >= ageMax);
+            }
+
+            if (interests != null && interests.Any(i => !string.IsNullOrEmpty(i)))
+            {
+                query = query.Where(e => e.Interests!.Any(i => interests.Contains(i.Name)));
+            }
+
+            var result = await query.ToListAsync();
+
             var eventList = result.Select(r => new ReadEventDto
             {
                 EventId = r.Id,
@@ -248,6 +274,54 @@ namespace Vänskap_Api.Service
             _context.Update(evnt);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<bool> JoinEvent(int id)
+        {
+            var result = await _context.Events.Include(e => e.EventParticipants).SingleOrDefaultAsync(e => e.Id == id);
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Id == UserId);
+            if (result == null || user == null || result.EventParticipants.Any(p => p.UserId == UserId)) return false;
+
+            if (result.IsPublic)
+            {
+                var age = DateTime.Today.Year - user.DateOfBirth.Year;
+                if (user.DateOfBirth.Date > DateTime.Today.AddYears(-age)) age--;
+
+                if (age >= result.AgeRangeMin && age <= result.AgeRangeMax)
+                {
+                    var participant = new EventParticipant()
+                    {
+                        UserId = UserId,
+                        EventId = result.Id
+                    };
+
+                    result.EventParticipants.Add(participant);
+                    await _context.SaveChangesAsync();
+
+                    return true;
+                }
+            }
+            else
+            {
+                var host = result.EventParticipants.SingleOrDefault(e => e.Role == "Host");
+                if (host == null) return false;
+
+                var friendship = await _context.Friendships.SingleOrDefaultAsync(f => (f.UserId == UserId && f.FriendId == host.UserId) || (f.UserId == host.UserId && f.FriendId == UserId));
+                if (friendship == null) return false;
+
+                var participant = new EventParticipant()
+                {
+                    UserId = UserId,
+                    EventId = result.Id
+                };
+
+                result.EventParticipants.Add(participant);
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+
+            return false;
         }
 
         public async Task<bool> DeleteEvent(int id)
