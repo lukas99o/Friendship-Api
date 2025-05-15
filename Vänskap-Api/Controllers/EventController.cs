@@ -31,10 +31,25 @@ namespace Vänskap_Api.Controllers
             return CreatedAtAction(nameof(ReadEvent), new { id = evnt.EventId }, evnt);
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<ReadEventDto>>> ReadAllEvents()
+        [HttpPost("{id}/join")]
+        public async Task<IActionResult> JoinEvent(int id)
         {
-            return Ok(await _eventService.ReadAllEvents());
+            var result = await _eventService.JoinEvent(id);
+            if (!result) return BadRequest("Could not join event.");
+
+            return Ok("Joined the event.");
+        }
+
+        [HttpGet("publicevents")]
+        public async Task<ActionResult<IEnumerable<ReadEventDto>>> ReadAllPublicEvents(ReadAllPublicEventsDto dto)
+        {
+            return Ok(await _eventService.ReadAllPublicEvents(dto.Interests!, dto.AgeMin, dto.AgeMax));
+        }
+
+        [HttpGet("friendsevents")]
+        public async Task<ActionResult<IEnumerable<ReadEventDto>>> GetAllFriendEvents()
+        {
+            return Ok(await _eventService.GetAllFriendEvents());
         }
 
         [HttpGet("{id}")]
