@@ -31,7 +31,7 @@ namespace Vänskap_Api.Controllers
             return CreatedAtAction(nameof(ReadEvent), new { id = evnt.EventId }, evnt);
         }
 
-        [HttpPost("{id}/join")]
+        [HttpPost("join/{id}")]
         public async Task<IActionResult> JoinEvent(int id)
         {
             var result = await _eventService.JoinEvent(id);
@@ -40,7 +40,16 @@ namespace Vänskap_Api.Controllers
             return Ok("Joined the event.");
         }
 
-        [HttpGet("publicevents")]
+        [HttpPost("leave/{id}")]
+        public async Task<IActionResult> LeaveEvent(int id)
+        {
+            var result = await _eventService.LeaveEvent(id);
+            if (!result) return BadRequest("Could not leave event");
+
+            return Ok("Left the event");
+        }
+
+        [HttpPost("publicevents")]
         public async Task<ActionResult<IEnumerable<ReadEventDto>>> ReadAllPublicEvents(ReadAllPublicEventsDto dto)
         {
             return Ok(await _eventService.ReadAllPublicEvents(dto.Interests!, dto.AgeMin, dto.AgeMax));
@@ -75,6 +84,12 @@ namespace Vänskap_Api.Controllers
             var success = await _eventService.DeleteEvent(id);
             if (!success) return NotFound();
             return NoContent();
+        }
+
+        [HttpGet("interests")]
+        public async Task<ActionResult<List<string>>> GetInterests()
+        {
+            return Ok(await _eventService.GetInterests());
         }
     }
 }

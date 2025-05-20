@@ -10,6 +10,8 @@ namespace Vänskap_Api.Service.IService
         Task<ReadEventDto?> ReadEvent(int id);
         Task<bool> UpdateEvent(int id, EventDto updateEvent);
         Task<bool> JoinEvent(int id);
+        Task<bool> LeaveEvent(int id);
         Task<bool> DeleteEvent(int id);
+        Task<List<string>> GetInterests();
     }
 }

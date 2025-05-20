@@ -96,6 +96,7 @@ namespace Vänskap_Api.Service
         {
             var query = _context.Events
                 .Include(e => e.EventParticipants)
+                .ThenInclude(ep => ep.User)
                 .Include(e => e.Interests)
                 .Where(e => e.IsPublic);
             
@@ -135,7 +136,7 @@ namespace Vänskap_Api.Service
                 Interests = r.Interests?.Select(i => i.Name).ToList(),
                 EventParticipants = r.EventParticipants.Select(p => new EventParticipantDto
                 {
-                    UserName = UserName,
+                    UserName = p.User?.UserName,
                     Role = p.Role,
                 }).ToList(),
                 IsPublic = r.IsPublic
@@ -153,6 +154,9 @@ namespace Vänskap_Api.Service
 
             var events = await _context.Events
                 .Where(e => friendIds.Contains(e.CreatedByUserId))
+                .Include(e => e.EventParticipants)
+                .ThenInclude(ep => ep.User)
+                .Include(e => e.Interests)
                 .ToListAsync();
 
             var eventList = events.Select(e => new ReadEventDto
@@ -169,7 +173,7 @@ namespace Vänskap_Api.Service
                 Interests = e.Interests?.Select(i => i.Name).ToList(),
                 EventParticipants = e.EventParticipants.Select(p => new EventParticipantDto
                 {
-                    UserName = UserName,
+                    UserName = p.User.UserName,
                     Role = p.Role,
                 }).ToList(),
                 IsPublic = e.IsPublic
@@ -280,6 +284,8 @@ namespace Vänskap_Api.Service
         {
             var result = await _context.Events.Include(e => e.EventParticipants).SingleOrDefaultAsync(e => e.Id == id);
             var user = await _context.Users.SingleOrDefaultAsync(u => u.Id == UserId);
+            var canJoin = false;
+
             if (result == null || user == null || result.EventParticipants.Any(p => p.UserId == UserId)) return false;
 
             if (result.IsPublic)
@@ -287,7 +293,13 @@ namespace Vänskap_Api.Service
                 var age = DateTime.Today.Year - user.DateOfBirth.Year;
                 if (user.DateOfBirth.Date > DateTime.Today.AddYears(-age)) age--;
 
-                if (age >= result.AgeRangeMin && age <= result.AgeRangeMax)
+                if (result.AgeRangeMax == null && result.AgeRangeMin == null) canJoin = true;
+                else if (age >= result.AgeRangeMin && age <= result.AgeRangeMax) canJoin = true;
+                else if (result.AgeRangeMin == null && age <= result.AgeRangeMax) canJoin = true;
+                else if (result.AgeRangeMax == null && age >= result.AgeRangeMin) canJoin = true;
+                else canJoin = false;
+                
+                if (canJoin)
                 {
                     var participant = new EventParticipant()
                     {
@@ -300,6 +312,8 @@ namespace Vänskap_Api.Service
 
                     return true;
                 }
+
+                return false;
             }
             else
             {
@@ -309,13 +323,44 @@ namespace Vänskap_Api.Service
                 var friendship = await _context.Friendships.SingleOrDefaultAsync(f => (f.UserId == UserId && f.FriendId == host.UserId) || (f.UserId == host.UserId && f.FriendId == UserId));
                 if (friendship == null) return false;
 
-                var participant = new EventParticipant()
-                {
-                    UserId = UserId,
-                    EventId = result.Id
-                };
+                var age = DateTime.Today.Year - user.DateOfBirth.Year;
+                if (user.DateOfBirth.Date > DateTime.Today.AddYears(-age)) age--;
 
-                result.EventParticipants.Add(participant);
+                if (result.AgeRangeMax == null && result.AgeRangeMin == null) canJoin = true;
+                else if (age >= result.AgeRangeMin && age <= result.AgeRangeMax) canJoin = true;
+                else if (result.AgeRangeMin == null && age <= result.AgeRangeMax) canJoin = true;
+                else if (result.AgeRangeMax == null && age >= result.AgeRangeMin) canJoin = true;
+                else canJoin = false;
+
+                if (canJoin)
+                {
+                    var participant = new EventParticipant()
+                    {
+                        UserId = UserId,
+                        EventId = result.Id
+                    };
+
+                    result.EventParticipants.Add(participant);
+                    await _context.SaveChangesAsync();
+
+                    return true;
+                }
+
+                return false;
+            }
+        }
+
+        public async Task<bool> LeaveEvent(int id)
+        {
+            var result = await _context.Events.Include(e => e.EventParticipants).SingleOrDefaultAsync(e => e.Id == id);
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Id == UserId);
+            if (result == null || user == null) return false;
+
+            var participant = result.EventParticipants.SingleOrDefault(ep => ep.UserId == UserId);
+
+            if (participant != null)
+            {
+                result.EventParticipants.Remove(participant);
                 await _context.SaveChangesAsync();
 
                 return true;
@@ -338,6 +383,11 @@ namespace Vänskap_Api.Service
             }
 
             return false;
+        }
+
+        public async Task<List<string>> GetInterests()
+        {
+            return await _context.Interests.Select(i => i.Name).ToListAsync();
         }
     }
 }
