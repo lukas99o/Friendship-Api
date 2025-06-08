@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Vänskap_Api.Data;
 
@@ -11,9 +12,11 @@ using Vänskap_Api.Data;
 namespace Vänskap_Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250529085518_AddingEvents")]
+    partial class AddingEvents
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,36 @@ namespace Vänskap_Api.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("ApplicationUserInterest", b =>
+                {
+                    b.Property<int>("InterestsId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UsersId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("InterestsId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("UserInterests", (string)null);
+                });
+
+            modelBuilder.Entity("EventInterest", b =>
+                {
+                    b.Property<int>("EventsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("InterestsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("EventsId", "InterestsId");
+
+                    b.HasIndex("InterestsId");
+
+                    b.ToTable("EventInterests", (string)null);
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -184,9 +217,6 @@ namespace Vänskap_Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("InterestId")
-                        .HasColumnType("int");
-
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -225,8 +255,6 @@ namespace Vänskap_Api.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("InterestId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -317,9 +345,6 @@ namespace Vänskap_Api.Migrations
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("InterestId")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsPublic")
                         .HasColumnType("bit");
 
@@ -337,257 +362,208 @@ namespace Vänskap_Api.Migrations
 
                     b.HasIndex("CreatedByUserId");
 
-                    b.HasIndex("InterestId");
-
                     b.ToTable("Events");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 6, 4, 12, 16, 5, 679, DateTimeKind.Utc).AddTicks(5679),
+                            CreatedAt = new DateTime(2025, 5, 29, 8, 55, 18, 533, DateTimeKind.Utc).AddTicks(9476),
                             CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a",
-                            EndTime = new DateTime(2025, 6, 5, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5675),
+                            EndTime = new DateTime(2025, 5, 30, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9473),
                             IsPublic = true,
-                            StartTime = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5635),
-                            Title = "Cooking & Travel Night"
+                            StartTime = new DateTime(2025, 5, 29, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9424),
+                            Title = "Pool Party"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 6, 4, 12, 16, 5, 679, DateTimeKind.Utc).AddTicks(5686),
+                            CreatedAt = new DateTime(2025, 5, 29, 8, 55, 18, 533, DateTimeKind.Utc).AddTicks(9484),
                             CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a",
-                            EndTime = new DateTime(2025, 6, 5, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5685),
+                            EndTime = new DateTime(2025, 5, 30, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9483),
                             IsPublic = true,
-                            StartTime = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5684),
-                            Title = "Photography Workshop"
+                            StartTime = new DateTime(2025, 5, 29, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9482),
+                            Title = "Board Game Night"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2025, 6, 4, 12, 16, 5, 679, DateTimeKind.Utc).AddTicks(5689),
+                            CreatedAt = new DateTime(2025, 5, 29, 8, 55, 18, 533, DateTimeKind.Utc).AddTicks(9487),
                             CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a",
-                            EndTime = new DateTime(2025, 6, 5, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5688),
+                            EndTime = new DateTime(2025, 5, 30, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9486),
                             IsPublic = true,
-                            StartTime = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5687),
-                            Title = "Fitness Bootcamp"
+                            StartTime = new DateTime(2025, 5, 29, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9485),
+                            Title = "Coding Jam"
                         },
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2025, 6, 4, 12, 16, 5, 679, DateTimeKind.Utc).AddTicks(5692),
+                            CreatedAt = new DateTime(2025, 5, 29, 8, 55, 18, 533, DateTimeKind.Utc).AddTicks(9490),
                             CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a",
-                            EndTime = new DateTime(2025, 6, 5, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5691),
+                            EndTime = new DateTime(2025, 5, 30, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9489),
                             IsPublic = true,
-                            StartTime = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5690),
-                            Title = "Morning Run"
+                            StartTime = new DateTime(2025, 5, 29, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9488),
+                            Title = "Pizza Friday"
                         },
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2025, 6, 4, 12, 16, 5, 679, DateTimeKind.Utc).AddTicks(5695),
+                            CreatedAt = new DateTime(2025, 5, 29, 8, 55, 18, 533, DateTimeKind.Utc).AddTicks(9493),
                             CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a",
-                            EndTime = new DateTime(2025, 6, 5, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5694),
+                            EndTime = new DateTime(2025, 5, 30, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9492),
                             IsPublic = true,
-                            StartTime = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5693),
-                            Title = "Hiking Adventure"
+                            StartTime = new DateTime(2025, 5, 29, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9491),
+                            Title = "Karaoke Night"
                         },
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2025, 6, 4, 12, 16, 5, 679, DateTimeKind.Utc).AddTicks(5698),
+                            CreatedAt = new DateTime(2025, 5, 29, 8, 55, 18, 533, DateTimeKind.Utc).AddTicks(9496),
                             CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a",
-                            EndTime = new DateTime(2025, 6, 5, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5697),
+                            EndTime = new DateTime(2025, 5, 30, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9495),
                             IsPublic = true,
-                            StartTime = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5696),
+                            StartTime = new DateTime(2025, 5, 29, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9494),
                             Title = "Book Club"
                         },
                         new
                         {
                             Id = 7,
-                            CreatedAt = new DateTime(2025, 6, 4, 12, 16, 5, 679, DateTimeKind.Utc).AddTicks(5702),
+                            CreatedAt = new DateTime(2025, 5, 29, 8, 55, 18, 533, DateTimeKind.Utc).AddTicks(9499),
                             CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a",
-                            EndTime = new DateTime(2025, 6, 5, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5701),
+                            EndTime = new DateTime(2025, 5, 30, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9498),
                             IsPublic = true,
-                            StartTime = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5700),
+                            StartTime = new DateTime(2025, 5, 29, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9497),
                             Title = "Hiking Trip"
                         },
                         new
                         {
                             Id = 8,
-                            CreatedAt = new DateTime(2025, 6, 4, 12, 16, 5, 679, DateTimeKind.Utc).AddTicks(5705),
+                            CreatedAt = new DateTime(2025, 5, 29, 8, 55, 18, 533, DateTimeKind.Utc).AddTicks(9533),
                             CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a",
-                            EndTime = new DateTime(2025, 6, 5, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5704),
+                            EndTime = new DateTime(2025, 5, 30, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9532),
                             IsPublic = true,
-                            StartTime = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5703),
+                            StartTime = new DateTime(2025, 5, 29, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9530),
                             Title = "Wine Tasting"
                         },
                         new
                         {
                             Id = 9,
-                            CreatedAt = new DateTime(2025, 6, 4, 12, 16, 5, 679, DateTimeKind.Utc).AddTicks(5709),
+                            CreatedAt = new DateTime(2025, 5, 29, 8, 55, 18, 533, DateTimeKind.Utc).AddTicks(9536),
                             CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a",
-                            EndTime = new DateTime(2025, 6, 5, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5708),
+                            EndTime = new DateTime(2025, 5, 30, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9535),
                             IsPublic = true,
-                            StartTime = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5707),
+                            StartTime = new DateTime(2025, 5, 29, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9534),
                             Title = "Sushi Workshop"
                         },
                         new
                         {
                             Id = 10,
-                            CreatedAt = new DateTime(2025, 6, 4, 12, 16, 5, 679, DateTimeKind.Utc).AddTicks(5713),
+                            CreatedAt = new DateTime(2025, 5, 29, 8, 55, 18, 533, DateTimeKind.Utc).AddTicks(9539),
                             CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a",
-                            EndTime = new DateTime(2025, 6, 5, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5712),
+                            EndTime = new DateTime(2025, 5, 30, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9538),
                             IsPublic = true,
-                            StartTime = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5711),
+                            StartTime = new DateTime(2025, 5, 29, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9537),
                             Title = "Beach Cleanup"
                         },
                         new
                         {
                             Id = 11,
-                            CreatedAt = new DateTime(2025, 6, 4, 12, 16, 5, 679, DateTimeKind.Utc).AddTicks(5717),
+                            CreatedAt = new DateTime(2025, 5, 29, 8, 55, 18, 533, DateTimeKind.Utc).AddTicks(9542),
                             CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a",
-                            EndTime = new DateTime(2025, 6, 5, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5716),
+                            EndTime = new DateTime(2025, 5, 30, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9541),
                             IsPublic = true,
-                            StartTime = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5715),
+                            StartTime = new DateTime(2025, 5, 29, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9540),
                             Title = "Stand-up Comedy"
                         },
                         new
                         {
                             Id = 12,
-                            CreatedAt = new DateTime(2025, 6, 4, 12, 16, 5, 679, DateTimeKind.Utc).AddTicks(5721),
+                            CreatedAt = new DateTime(2025, 5, 29, 8, 55, 18, 533, DateTimeKind.Utc).AddTicks(9545),
                             CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a",
-                            EndTime = new DateTime(2025, 6, 5, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5720),
+                            EndTime = new DateTime(2025, 5, 30, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9544),
                             IsPublic = true,
-                            StartTime = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5718),
+                            StartTime = new DateTime(2025, 5, 29, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9543),
                             Title = "Coffee Meetup"
                         },
                         new
                         {
                             Id = 13,
-                            CreatedAt = new DateTime(2025, 6, 4, 12, 16, 5, 679, DateTimeKind.Utc).AddTicks(5724),
+                            CreatedAt = new DateTime(2025, 5, 29, 8, 55, 18, 533, DateTimeKind.Utc).AddTicks(9548),
                             CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a",
-                            EndTime = new DateTime(2025, 6, 5, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5723),
+                            EndTime = new DateTime(2025, 5, 30, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9547),
                             IsPublic = true,
-                            StartTime = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5722),
+                            StartTime = new DateTime(2025, 5, 29, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9546),
                             Title = "Art & Chill"
                         },
                         new
                         {
                             Id = 14,
-                            CreatedAt = new DateTime(2025, 6, 4, 12, 16, 5, 679, DateTimeKind.Utc).AddTicks(5727),
+                            CreatedAt = new DateTime(2025, 5, 29, 8, 55, 18, 533, DateTimeKind.Utc).AddTicks(9551),
                             CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a",
-                            EndTime = new DateTime(2025, 6, 5, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5726),
+                            EndTime = new DateTime(2025, 5, 30, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9550),
                             IsPublic = true,
-                            StartTime = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5725),
+                            StartTime = new DateTime(2025, 5, 29, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9549),
                             Title = "Outdoor Yoga"
                         },
                         new
                         {
                             Id = 15,
-                            CreatedAt = new DateTime(2025, 6, 4, 12, 16, 5, 679, DateTimeKind.Utc).AddTicks(5730),
+                            CreatedAt = new DateTime(2025, 5, 29, 8, 55, 18, 533, DateTimeKind.Utc).AddTicks(9554),
                             CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a",
-                            EndTime = new DateTime(2025, 6, 5, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5729),
+                            EndTime = new DateTime(2025, 5, 30, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9553),
                             IsPublic = true,
-                            StartTime = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5728),
+                            StartTime = new DateTime(2025, 5, 29, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9552),
                             Title = "Language Exchange"
                         },
                         new
                         {
                             Id = 16,
-                            CreatedAt = new DateTime(2025, 6, 4, 12, 16, 5, 679, DateTimeKind.Utc).AddTicks(5733),
+                            CreatedAt = new DateTime(2025, 5, 29, 8, 55, 18, 533, DateTimeKind.Utc).AddTicks(9557),
                             CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a",
-                            EndTime = new DateTime(2025, 6, 5, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5732),
+                            EndTime = new DateTime(2025, 5, 30, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9556),
                             IsPublic = true,
-                            StartTime = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5731),
+                            StartTime = new DateTime(2025, 5, 29, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9555),
                             Title = "Bike Ride"
                         },
                         new
                         {
                             Id = 17,
-                            CreatedAt = new DateTime(2025, 6, 4, 12, 16, 5, 679, DateTimeKind.Utc).AddTicks(5736),
+                            CreatedAt = new DateTime(2025, 5, 29, 8, 55, 18, 533, DateTimeKind.Utc).AddTicks(9560),
                             CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a",
-                            EndTime = new DateTime(2025, 6, 5, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5735),
+                            EndTime = new DateTime(2025, 5, 30, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9559),
                             IsPublic = true,
-                            StartTime = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5734),
+                            StartTime = new DateTime(2025, 5, 29, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9558),
                             Title = "Movie Marathon"
                         },
                         new
                         {
                             Id = 18,
-                            CreatedAt = new DateTime(2025, 6, 4, 12, 16, 5, 679, DateTimeKind.Utc).AddTicks(5739),
+                            CreatedAt = new DateTime(2025, 5, 29, 8, 55, 18, 533, DateTimeKind.Utc).AddTicks(9564),
                             CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a",
-                            EndTime = new DateTime(2025, 6, 5, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5738),
+                            EndTime = new DateTime(2025, 5, 30, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9563),
                             IsPublic = true,
-                            StartTime = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5737),
+                            StartTime = new DateTime(2025, 5, 29, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9562),
                             Title = "Street Food Tour"
                         },
                         new
                         {
                             Id = 19,
-                            CreatedAt = new DateTime(2025, 6, 4, 12, 16, 5, 679, DateTimeKind.Utc).AddTicks(5742),
+                            CreatedAt = new DateTime(2025, 5, 29, 8, 55, 18, 533, DateTimeKind.Utc).AddTicks(9567),
                             CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a",
-                            EndTime = new DateTime(2025, 6, 5, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5741),
+                            EndTime = new DateTime(2025, 5, 30, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9566),
                             IsPublic = true,
-                            StartTime = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5740),
+                            StartTime = new DateTime(2025, 5, 29, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9565),
                             Title = "Photography Walk"
                         },
                         new
                         {
                             Id = 20,
-                            CreatedAt = new DateTime(2025, 6, 4, 12, 16, 5, 679, DateTimeKind.Utc).AddTicks(5745),
+                            CreatedAt = new DateTime(2025, 5, 29, 8, 55, 18, 533, DateTimeKind.Utc).AddTicks(9570),
                             CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a",
-                            EndTime = new DateTime(2025, 6, 5, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5744),
+                            EndTime = new DateTime(2025, 5, 30, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9569),
                             IsPublic = true,
-                            StartTime = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5743),
+                            StartTime = new DateTime(2025, 5, 29, 10, 55, 18, 533, DateTimeKind.Local).AddTicks(9568),
                             Title = "Midnight Picnic"
-                        });
-                });
-
-            modelBuilder.Entity("Vänskap_Api.Models.EventInterest", b =>
-                {
-                    b.Property<int>("EventId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("InterestId")
-                        .HasColumnType("int");
-
-                    b.HasKey("EventId", "InterestId");
-
-                    b.HasIndex("InterestId");
-
-                    b.ToTable("EventInterest");
-
-                    b.HasData(
-                        new
-                        {
-                            EventId = 1,
-                            InterestId = 1
-                        },
-                        new
-                        {
-                            EventId = 2,
-                            InterestId = 2
-                        },
-                        new
-                        {
-                            EventId = 2,
-                            InterestId = 3
-                        },
-                        new
-                        {
-                            EventId = 3,
-                            InterestId = 4
-                        },
-                        new
-                        {
-                            EventId = 4,
-                            InterestId = 5
-                        },
-                        new
-                        {
-                            EventId = 5,
-                            InterestId = 6
                         });
                 });
 
@@ -620,168 +596,6 @@ namespace Vänskap_Api.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("EventParticipants");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            EventId = 1,
-                            JoinedAt = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5946),
-                            Role = "Host",
-                            UserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            EventId = 2,
-                            JoinedAt = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5949),
-                            Role = "Host",
-                            UserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            EventId = 3,
-                            JoinedAt = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5951),
-                            Role = "Host",
-                            UserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            EventId = 4,
-                            JoinedAt = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5953),
-                            Role = "Host",
-                            UserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            EventId = 5,
-                            JoinedAt = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5981),
-                            Role = "Host",
-                            UserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            EventId = 6,
-                            JoinedAt = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5983),
-                            Role = "Host",
-                            UserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            EventId = 7,
-                            JoinedAt = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5986),
-                            Role = "Host",
-                            UserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            EventId = 8,
-                            JoinedAt = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5988),
-                            Role = "Host",
-                            UserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            EventId = 9,
-                            JoinedAt = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5990),
-                            Role = "Host",
-                            UserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a"
-                        },
-                        new
-                        {
-                            Id = 10,
-                            EventId = 10,
-                            JoinedAt = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5992),
-                            Role = "Host",
-                            UserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a"
-                        },
-                        new
-                        {
-                            Id = 11,
-                            EventId = 11,
-                            JoinedAt = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5995),
-                            Role = "Host",
-                            UserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a"
-                        },
-                        new
-                        {
-                            Id = 12,
-                            EventId = 12,
-                            JoinedAt = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5997),
-                            Role = "Host",
-                            UserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a"
-                        },
-                        new
-                        {
-                            Id = 13,
-                            EventId = 13,
-                            JoinedAt = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(5999),
-                            Role = "Host",
-                            UserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a"
-                        },
-                        new
-                        {
-                            Id = 14,
-                            EventId = 14,
-                            JoinedAt = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(6001),
-                            Role = "Host",
-                            UserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a"
-                        },
-                        new
-                        {
-                            Id = 15,
-                            EventId = 15,
-                            JoinedAt = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(6004),
-                            Role = "Host",
-                            UserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a"
-                        },
-                        new
-                        {
-                            Id = 16,
-                            EventId = 16,
-                            JoinedAt = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(6006),
-                            Role = "Host",
-                            UserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a"
-                        },
-                        new
-                        {
-                            Id = 17,
-                            EventId = 17,
-                            JoinedAt = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(6008),
-                            Role = "Host",
-                            UserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a"
-                        },
-                        new
-                        {
-                            Id = 18,
-                            EventId = 18,
-                            JoinedAt = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(6010),
-                            Role = "Host",
-                            UserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a"
-                        },
-                        new
-                        {
-                            Id = 19,
-                            EventId = 19,
-                            JoinedAt = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(6013),
-                            Role = "Host",
-                            UserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a"
-                        },
-                        new
-                        {
-                            Id = 20,
-                            EventId = 20,
-                            JoinedAt = new DateTime(2025, 6, 4, 14, 16, 5, 679, DateTimeKind.Local).AddTicks(6015),
-                            Role = "Host",
-                            UserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a"
-                        });
                 });
 
             modelBuilder.Entity("Vänskap_Api.Models.FriendRequest", b =>
@@ -1421,19 +1235,34 @@ namespace Vänskap_Api.Migrations
                     b.ToTable("MessageReadAt");
                 });
 
-            modelBuilder.Entity("Vänskap_Api.Models.UserInterest", b =>
+            modelBuilder.Entity("ApplicationUserInterest", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.HasOne("Vänskap_Api.Models.Interest", null)
+                        .WithMany()
+                        .HasForeignKey("InterestsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<int>("InterestId")
-                        .HasColumnType("int");
+                    b.HasOne("Vänskap_Api.Models.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
 
-                    b.HasKey("UserId", "InterestId");
+            modelBuilder.Entity("EventInterest", b =>
+                {
+                    b.HasOne("Vänskap_Api.Models.Event", null)
+                        .WithMany()
+                        .HasForeignKey("EventsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasIndex("InterestId");
-
-                    b.ToTable("UserInterest");
+                    b.HasOne("Vänskap_Api.Models.Interest", null)
+                        .WithMany()
+                        .HasForeignKey("InterestsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1487,13 +1316,6 @@ namespace Vänskap_Api.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Vänskap_Api.Models.ApplicationUser", b =>
-                {
-                    b.HasOne("Vänskap_Api.Models.Interest", null)
-                        .WithMany("Users")
-                        .HasForeignKey("InterestId");
-                });
-
             modelBuilder.Entity("Vänskap_Api.Models.ConversationParticipant", b =>
                 {
                     b.HasOne("Vänskap_Api.Models.Conversation", "Conversation")
@@ -1521,30 +1343,7 @@ namespace Vänskap_Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Vänskap_Api.Models.Interest", null)
-                        .WithMany("Events")
-                        .HasForeignKey("InterestId");
-
                     b.Navigation("CreatedByUser");
-                });
-
-            modelBuilder.Entity("Vänskap_Api.Models.EventInterest", b =>
-                {
-                    b.HasOne("Vänskap_Api.Models.Event", "Event")
-                        .WithMany("EventInterests")
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Vänskap_Api.Models.Interest", "Interest")
-                        .WithMany()
-                        .HasForeignKey("InterestId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Event");
-
-                    b.Navigation("Interest");
                 });
 
             modelBuilder.Entity("Vänskap_Api.Models.EventParticipant", b =>
@@ -1642,25 +1441,6 @@ namespace Vänskap_Api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Vänskap_Api.Models.UserInterest", b =>
-                {
-                    b.HasOne("Vänskap_Api.Models.Interest", "Interest")
-                        .WithMany()
-                        .HasForeignKey("InterestId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Vänskap_Api.Models.ApplicationUser", "User")
-                        .WithMany("UserInterests")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Interest");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Vänskap_Api.Models.ApplicationUser", b =>
                 {
                     b.Navigation("ConversationParticipations");
@@ -1672,8 +1452,6 @@ namespace Vänskap_Api.Migrations
                     b.Navigation("Friendships");
 
                     b.Navigation("ReadMessages");
-
-                    b.Navigation("UserInterests");
                 });
 
             modelBuilder.Entity("Vänskap_Api.Models.Conversation", b =>
@@ -1685,16 +1463,7 @@ namespace Vänskap_Api.Migrations
 
             modelBuilder.Entity("Vänskap_Api.Models.Event", b =>
                 {
-                    b.Navigation("EventInterests");
-
                     b.Navigation("EventParticipants");
-                });
-
-            modelBuilder.Entity("Vänskap_Api.Models.Interest", b =>
-                {
-                    b.Navigation("Events");
-
-                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Vänskap_Api.Models.Message", b =>

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
+using Microsoft.OpenApi.Extensions;
 using Sprache;
 using System.Security.Claims;
 using Vänskap_Api.Data;
@@ -23,7 +24,7 @@ namespace Vänskap_Api.Service
             _contextAccessor = contextAssessor;
         }
 
-        public async Task<ReadEventDto> CreateEvent(EventDto createEvent)
+        public async Task<ReadEventDto?> CreateEvent(EventDto createEvent)
         {
             var user = await _context.Users.FindAsync(UserId);
             var interests = new List<Interest>();
@@ -45,51 +46,66 @@ namespace Vänskap_Api.Service
                 AgeRangeMax = createEvent.AgeRangeMax,
                 AgeRangeMin = createEvent.AgeRangeMin,
                 IsPublic = createEvent.IsPublic,
-                Interests = interests,
                 Location = createEvent.Location
             };
 
             await _context.Events.AddAsync(createObj);
             await _context.SaveChangesAsync();
-
-            var eventParticipant = new EventParticipant()
+            
+            if (createObj != null)
             {
-                Role = "Host",
-                UserId = UserId,
-                EventId = createObj.Id
-            };
+                var eventParticipant = new EventParticipant()
+                {
+                    Role = "Host",
+                    UserId = UserId,
+                    EventId = createObj.Id
+                };
 
-            createObj.EventParticipants.Add(eventParticipant);
-            _context.Events.Update(createObj);
-            await _context.EventParticipants.AddAsync(eventParticipant);
-            user?.CreatedEvents.Add(createObj);
-            await _context.SaveChangesAsync();
+                foreach (var interest in interests)
+                {
+                    var eventInterest = new EventInterest()
+                    {
+                        InterestId = interest.Id,
+                        EventId = createObj!.Id
+                    };
 
-            var eventParticiantList = new List<EventParticipantDto>();
-            var eventParticipantDto = new EventParticipantDto()
-            {
-                UserName = UserName,
-                Role = eventParticipant.Role,
-            };
-            eventParticiantList.Add(eventParticipantDto);
+                    createObj?.EventInterests?.Add(eventInterest);
+                }
 
-            var evnt = new ReadEventDto()
-            {
-                EventId = createObj.Id,
-                UserId = createObj.CreatedByUserId,
-                Title = createObj.Title,
-                Description = createObj.Description,
-                StartTime = createObj.StartTime,
-                EndTime = createObj.EndTime,
-                Location = createObj.Location,
-                AgeRangeMax = createObj.AgeRangeMax,
-                AgeRangeMin = createObj.AgeRangeMin,
-                Interests = interests.Select(i => i.Name).ToList(),
-                EventParticipants = eventParticiantList,
-                IsPublic = createObj.IsPublic
-            };
+                createObj?.EventParticipants.Add(eventParticipant);
+                _context.Events.Update(createObj!);
+                await _context.EventParticipants.AddAsync(eventParticipant);
+                user?.CreatedEvents.Add(createObj!);
+                await _context.SaveChangesAsync();
 
-            return evnt;
+                var eventParticiantList = new List<EventParticipantDto>();
+                var eventParticipantDto = new EventParticipantDto()
+                {
+                    UserName = UserName,
+                    Role = eventParticipant.Role,
+                };
+                eventParticiantList.Add(eventParticipantDto);
+
+                var evnt = new ReadEventDto()
+                {
+                    EventId = createObj!.Id,
+                    UserId = createObj.CreatedByUserId,
+                    Title = createObj.Title,
+                    Description = createObj.Description,
+                    StartTime = createObj.StartTime,
+                    EndTime = createObj.EndTime,
+                    Location = createObj.Location,
+                    AgeRangeMax = createObj.AgeRangeMax,
+                    AgeRangeMin = createObj.AgeRangeMin,
+                    Interests = interests.Select(i => i.Name).ToList(),
+                    EventParticipants = eventParticiantList,
+                    IsPublic = createObj.IsPublic
+                };
+
+                return evnt;
+            }
+
+            return null;
         }
 
         public async Task<IEnumerable<ReadEventDto>> ReadAllPublicEvents(List<string?> interests, int? ageMin, int? ageMax)
@@ -97,8 +113,18 @@ namespace Vänskap_Api.Service
             var query = _context.Events
                 .Include(e => e.EventParticipants)
                 .ThenInclude(ep => ep.User)
-                .Include(e => e.Interests)
+                .Include(e => e.EventInterests)
+                .ThenInclude(ei => ei.Interest)
                 .Where(e => e.IsPublic);
+
+            var interestIds = new List<int>();
+            if (interests != null)
+            {
+                interestIds = await _context.Interests
+                .Where(i => interests.Contains(i.Name))
+                .Select(i => i.Id)
+                .ToListAsync();
+            }
             
             if (ageMin != null && ageMax != null)
             {
@@ -117,7 +143,7 @@ namespace Vänskap_Api.Service
 
             if (interests != null && interests.Any(i => !string.IsNullOrEmpty(i)))
             {
-                query = query.Where(e => e.Interests!.Any(i => interests.Contains(i.Name)));
+                query = query.Where(e => e.EventInterests!.Any(i => interestIds.Contains(i.EventId)));
             }
 
             var result = await query.ToListAsync();
@@ -133,7 +159,7 @@ namespace Vänskap_Api.Service
                 Location = r.Location,
                 AgeRangeMax = r.AgeRangeMax,
                 AgeRangeMin = r.AgeRangeMin,
-                Interests = r.Interests?.Select(i => i.Name).ToList(),
+                Interests = r.EventInterests?.Select(i => i.Interest != null ? i.Interest.Name : "").ToList(),
                 EventParticipants = r.EventParticipants.Select(p => new EventParticipantDto
                 {
                     UserName = p.User?.UserName,
@@ -156,7 +182,7 @@ namespace Vänskap_Api.Service
                 .Where(e => friendIds.Contains(e.CreatedByUserId))
                 .Include(e => e.EventParticipants)
                 .ThenInclude(ep => ep.User)
-                .Include(e => e.Interests)
+                .Include(e => e.EventInterests)
                 .ToListAsync();
 
             var eventList = events.Select(e => new ReadEventDto
@@ -170,10 +196,10 @@ namespace Vänskap_Api.Service
                 Location = e.Location,
                 AgeRangeMax = e.AgeRangeMax,
                 AgeRangeMin = e.AgeRangeMin,
-                Interests = e.Interests?.Select(i => i.Name).ToList(),
+                Interests = e.EventInterests?.Select(i => i.Interest != null ? i.Interest.Name : "").ToList(),
                 EventParticipants = e.EventParticipants.Select(p => new EventParticipantDto
                 {
-                    UserName = p.User.UserName,
+                    UserName = p.User?.UserName,
                     Role = p.Role,
                 }).ToList(),
                 IsPublic = e.IsPublic
@@ -185,7 +211,7 @@ namespace Vänskap_Api.Service
         public async Task<ReadEventDto?> ReadEvent(int id)
         {
             var result = await _context.Events
-                .Include(e => e.Interests)
+                .Include(e => e.EventInterests)
                 .Include(e => e.EventParticipants)
                 .FirstOrDefaultAsync(e => e.Id == id);
             if (result == null) return null;
@@ -203,7 +229,7 @@ namespace Vänskap_Api.Service
                     Location = result.Location,
                     AgeRangeMax = result.AgeRangeMax,
                     AgeRangeMin = result.AgeRangeMin,
-                    Interests = result.Interests?.Select(i => i.Name).ToList(),
+                    Interests = result.EventInterests?.Select(i => i.Interest != null ? i.Interest.Name : "").ToList(),
                     EventParticipants = result.EventParticipants.Select(p => new EventParticipantDto
                     {
                         UserName = UserName,
@@ -235,7 +261,7 @@ namespace Vänskap_Api.Service
                     Location = result.Location,
                     AgeRangeMax = result.AgeRangeMax,
                     AgeRangeMin = result.AgeRangeMin,
-                    Interests = result.Interests?.Select(i => i.Name).ToList(),
+                    Interests = result.EventInterests?.Select(i => i.Interest != null ? i.Interest.Name : "").ToList(),
                     EventParticipants = result.EventParticipants.Select(p => new EventParticipantDto
                     {
                         UserName = UserName,
@@ -251,33 +277,47 @@ namespace Vänskap_Api.Service
         public async Task<bool> UpdateEvent(int id, EventDto updateEvent)
         {
             var evnt = await _context.Events
-                .Include(e => e.Interests)
+                .Include(e => e.EventInterests)
                 .FirstOrDefaultAsync(e => e.Id == id);
 
-            if (evnt == null) return false;
-            var currentinterests = new List<Interest>();
+            var interests = new List<Interest>();
 
             if (updateEvent.Interests != null)
             {
-                currentinterests = await _context.Interests
+                interests = await _context.Interests
                     .Where(i => updateEvent.Interests.Contains(i.Name))
                     .ToListAsync();
             }
 
-            evnt.CreatedByUserId = UserId;
-            evnt.Title = updateEvent.Title;
-            evnt.Description = updateEvent.Description;
-            evnt.Location = updateEvent.Location;
-            evnt.AgeRangeMax = updateEvent.AgeRangeMax;
-            evnt.AgeRangeMin = updateEvent.AgeRangeMin;
-            evnt.IsPublic = updateEvent.IsPublic;
-            evnt.Interests = currentinterests;
-            evnt.StartTime = updateEvent.StartTime;
-            evnt.EndTime = updateEvent.EndTime;
+            if (evnt != null)
+            {
+                foreach (var interest in interests)
+                {
+                    var eventInterest = new EventInterest
+                    {
+                        EventId = id,
+                        InterestId = interest.Id,
+                    };
 
-            _context.Update(evnt);
-            await _context.SaveChangesAsync();
-            return true;
+                    evnt.EventInterests?.Add(eventInterest);
+                }
+
+                evnt.CreatedByUserId = UserId;
+                evnt.Title = updateEvent.Title;
+                evnt.Description = updateEvent.Description;
+                evnt.Location = updateEvent.Location;
+                evnt.AgeRangeMax = updateEvent.AgeRangeMax;
+                evnt.AgeRangeMin = updateEvent.AgeRangeMin;
+                evnt.IsPublic = updateEvent.IsPublic;
+                evnt.StartTime = updateEvent.StartTime;
+                evnt.EndTime = updateEvent.EndTime;
+
+                _context.Update(evnt);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+
+            return false;
         }
 
         public async Task<bool> JoinEvent(int id)

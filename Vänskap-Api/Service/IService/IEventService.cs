@@ -4,7 +4,7 @@ namespace Vänskap_Api.Service.IService
 {
     public interface IEventService
     {
-        Task<ReadEventDto> CreateEvent(EventDto createEvent);
+        Task<ReadEventDto?> CreateEvent(EventDto createEvent);
         Task<IEnumerable<ReadEventDto>> ReadAllPublicEvents(List<string?> interests, int? ageMin, int? ageMax);
         Task<IEnumerable<ReadEventDto>> GetAllFriendEvents();
         Task<ReadEventDto?> ReadEvent(int id);
