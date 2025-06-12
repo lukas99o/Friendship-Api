@@ -183,6 +183,7 @@ namespace Vänskap_Api.Service
                 .Include(e => e.EventParticipants)
                 .ThenInclude(ep => ep.User)
                 .Include(e => e.EventInterests)
+                .ThenInclude(ei => ei.Interest)
                 .ToListAsync();
 
             var eventList = events.Select(e => new ReadEventDto
@@ -428,6 +429,17 @@ namespace Vänskap_Api.Service
         public async Task<List<string>> GetInterests()
         {
             return await _context.Interests.Select(i => i.Name).ToListAsync();
+        }
+
+        public async Task<List<int>> EventPartcipantStatus()
+        {
+            var events = await _context.Events
+                .Include(e => e.EventParticipants)
+                .Where(e => e.EventParticipants.Any(ep => ep.UserId == UserId))
+                .Select(e => e.Id)
+                .ToListAsync();
+
+            return events;
         }
     }
 }

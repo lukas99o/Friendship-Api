@@ -91,5 +91,11 @@ namespace Vänskap_Api.Controllers
         {
             return Ok(await _eventService.GetInterests());
         }
+
+        [HttpGet("participant-status")]
+        public async Task<ActionResult<List<int>>> GetParticipantStatus()
+        {
+            return Ok(await _eventService.EventPartcipantStatus());
+        }
     }
 }

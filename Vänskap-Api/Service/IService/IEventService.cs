@@ -13,5 +13,6 @@ namespace Vänskap_Api.Service.IService
         Task<bool> LeaveEvent(int id);
         Task<bool> DeleteEvent(int id);
         Task<List<string>> GetInterests();
+        Task<List<int>> EventPartcipantStatus();
     }
 }
