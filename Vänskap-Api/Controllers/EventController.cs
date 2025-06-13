@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
+using System.Security.Claims;
+using Vänskap_Api.Data;
+using Vänskap_Api.Models;
 using Vänskap_Api.Models.Dtos.Event;
 using Vänskap_Api.Service.IService;
 
@@ -12,10 +14,16 @@ namespace Vänskap_Api.Controllers
     public class EventController : ControllerBase
     {
         private readonly IEventService _eventService;
+        private readonly ApplicationDbContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public EventController(IEventService eventService)
+        private string UserId => _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? throw new ArgumentNullException(nameof(UserId));
+
+        public EventController(IEventService eventService, ApplicationDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             _eventService = eventService;
+            _context = context;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [HttpPost]
@@ -96,6 +104,63 @@ namespace Vänskap_Api.Controllers
         public async Task<ActionResult<List<int>>> GetParticipantStatus()
         {
             return Ok(await _eventService.EventPartcipantStatus());
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("seed-eventdata")]
+        public async Task<IActionResult> SeedEventData()
+        {
+            List<Event> events = new()
+            {
+                new() { Title = "Cooking & Travel Night", IsPublic = true, CreatedByUserId = UserId },
+                new() { Title = "Photography Workshop", IsPublic = true, CreatedByUserId = UserId },
+                new() { Title = "Fitness Bootcamp", IsPublic = true, CreatedByUserId = UserId },
+                new() { Title = "Morning Run", IsPublic = true, CreatedByUserId = UserId },
+                new() { Title = "Hiking Adventure", IsPublic = true, CreatedByUserId = UserId },
+                new() { Title = "Book Club", IsPublic = true, CreatedByUserId = UserId },
+                new() { Title = "Hiking Trip", IsPublic = true, CreatedByUserId = UserId },
+                new() { Title = "Wine Tasting", IsPublic = true, CreatedByUserId = UserId },
+                new() { Title = "Sushi Workshop", IsPublic = true, CreatedByUserId = UserId },
+                new() { Title = "Beach Cleanup", IsPublic = true, CreatedByUserId = UserId },
+                new() { Title = "Stand-up Comedy", IsPublic = true, CreatedByUserId = UserId },
+                new() { Title = "Coffee Meetup", IsPublic = true, CreatedByUserId = UserId },
+                new() { Title = "Art & Chill", IsPublic = true, CreatedByUserId = UserId },
+                new() { Title = "Outdoor Yoga", IsPublic = true, CreatedByUserId = UserId },
+                new() { Title = "Language Exchange", IsPublic = true, CreatedByUserId = UserId },
+                new() { Title = "Bike Ride", IsPublic = true, CreatedByUserId = UserId },
+                new() { Title = "Movie Marathon", IsPublic = true, CreatedByUserId = UserId },
+                new() { Title = "Street Food Tour", IsPublic = true, CreatedByUserId = UserId },
+                new() { Title = "Photography Walk", IsPublic = true, CreatedByUserId = UserId },
+                new() { Title = "Midnight Picnic", IsPublic = true, CreatedByUserId = UserId }
+            };
+
+            await _context.AddRangeAsync(events);
+            await _context.SaveChangesAsync();
+
+            // EventId måste sättas efter att events har sparats och fått sina riktiga ID:n
+            var eventParticipants = events.Select(e => new EventParticipant
+            {
+                UserId = UserId,
+                EventId = e.Id,
+                Role = "Host",
+                JoinedAt = DateTime.Now
+            }).ToList();
+
+            var eventInterests = new List<EventInterest>
+            {
+                new() { InterestId = 1, EventId = events[0].Id },
+                new() { InterestId = 2, EventId = events[1].Id },
+                new() { InterestId = 3, EventId = events[1].Id },
+                new() { InterestId = 4, EventId = events[2].Id },
+                new() { InterestId = 5, EventId = events[3].Id },
+                new() { InterestId = 6, EventId = events[4].Id }
+            };
+
+            await _context.AddRangeAsync(eventParticipants);
+            await _context.AddRangeAsync(eventInterests);
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
     }
 }
