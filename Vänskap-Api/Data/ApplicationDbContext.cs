@@ -191,50 +191,50 @@ namespace Vänskap_Api.Data
                 new Interest { Id = 100, Name = "Origami" }
             );
 
-            builder.Entity<Event>().HasData(
-                new Event { Id = 1, Title = "Cooking & Travel Night", IsPublic = true, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a"  }, 
-                new Event { Id = 2, Title = "Photography Workshop", IsPublic = true, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a" }, 
-                new Event { Id = 3, Title = "Fitness Bootcamp", IsPublic = true, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a" }, 
-                new Event { Id = 4, Title = "Morning Run", IsPublic = true, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a" },
-                new Event { Id = 5, Title = "Hiking Adventure", IsPublic = true, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a" },
-                new Event { Id = 6, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a", Title = "Book Club", IsPublic = true },
-                new Event { Id = 7, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a", Title = "Hiking Trip", IsPublic = true },
-                new Event { Id = 8, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a", Title = "Wine Tasting", IsPublic = true },
-                new Event { Id = 9, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a", Title = "Sushi Workshop", IsPublic = true },
-                new Event { Id = 10, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a", Title = "Beach Cleanup", IsPublic = true },
-                new Event { Id = 11, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a", Title = "Stand-up Comedy", IsPublic = true },
-                new Event { Id = 12, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a", Title = "Coffee Meetup", IsPublic = true },
-                new Event { Id = 13, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a", Title = "Art & Chill", IsPublic = true },
-                new Event { Id = 14, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a", Title = "Outdoor Yoga", IsPublic = true },
-                new Event { Id = 15, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a", Title = "Language Exchange", IsPublic = true },
-                new Event { Id = 16, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a", Title = "Bike Ride", IsPublic = true },
-                new Event { Id = 17, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a", Title = "Movie Marathon", IsPublic = true },
-                new Event { Id = 18, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a", Title = "Street Food Tour", IsPublic = true },
-                new Event { Id = 19, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a", Title = "Photography Walk", IsPublic = true },
-                new Event { Id = 20, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a", Title = "Midnight Picnic", IsPublic = true }
-            );
+            //builder.Entity<Event>().HasData(
+            //    new Event { Id = 1, Title = "Cooking & Travel Night", IsPublic = true, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a"  }, 
+            //    new Event { Id = 2, Title = "Photography Workshop", IsPublic = true, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a" }, 
+            //    new Event { Id = 3, Title = "Fitness Bootcamp", IsPublic = true, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a" }, 
+            //    new Event { Id = 4, Title = "Morning Run", IsPublic = true, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a" },
+            //    new Event { Id = 5, Title = "Hiking Adventure", IsPublic = true, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a" },
+            //    new Event { Id = 6, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a", Title = "Book Club", IsPublic = true },
+            //    new Event { Id = 7, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a", Title = "Hiking Trip", IsPublic = true },
+            //    new Event { Id = 8, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a", Title = "Wine Tasting", IsPublic = true },
+            //    new Event { Id = 9, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a", Title = "Sushi Workshop", IsPublic = true },
+            //    new Event { Id = 10, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a", Title = "Beach Cleanup", IsPublic = true },
+            //    new Event { Id = 11, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a", Title = "Stand-up Comedy", IsPublic = true },
+            //    new Event { Id = 12, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a", Title = "Coffee Meetup", IsPublic = true },
+            //    new Event { Id = 13, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a", Title = "Art & Chill", IsPublic = true },
+            //    new Event { Id = 14, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a", Title = "Outdoor Yoga", IsPublic = true },
+            //    new Event { Id = 15, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a", Title = "Language Exchange", IsPublic = true },
+            //    new Event { Id = 16, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a", Title = "Bike Ride", IsPublic = true },
+            //    new Event { Id = 17, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a", Title = "Movie Marathon", IsPublic = true },
+            //    new Event { Id = 18, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a", Title = "Street Food Tour", IsPublic = true },
+            //    new Event { Id = 19, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a", Title = "Photography Walk", IsPublic = true },
+            //    new Event { Id = 20, CreatedByUserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a", Title = "Midnight Picnic", IsPublic = true }
+            //);
 
             // Seed EventInterests into each event
-            builder.Entity<EventInterest>().HasData(
-                new EventInterest { InterestId = 1, EventId = 1 },
-                new EventInterest { InterestId = 2, EventId = 2 },
-                new EventInterest { InterestId = 3, EventId = 2 },
-                new EventInterest { InterestId = 4, EventId = 3 },
-                new EventInterest { InterestId = 5, EventId = 4 },
-                new EventInterest { InterestId = 6, EventId = 5 }
-            );
+            //builder.Entity<EventInterest>().HasData(
+            //    new EventInterest { InterestId = 1, EventId = 1 },
+            //    new EventInterest { InterestId = 2, EventId = 2 },
+            //    new EventInterest { InterestId = 3, EventId = 2 },
+            //    new EventInterest { InterestId = 4, EventId = 3 },
+            //    new EventInterest { InterestId = 5, EventId = 4 },
+            //    new EventInterest { InterestId = 6, EventId = 5 }
+            //);
 
             // Seed host into each event
-            builder.Entity<EventParticipant>().HasData(
-                Enumerable.Range(1, 20).Select(id => new EventParticipant
-                {
-                    Id = id,
-                    UserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a",
-                    EventId = id,
-                    Role = "Host",
-                    JoinedAt = DateTime.Now
-                }).ToArray()
-            );
+            //builder.Entity<EventParticipant>().HasData(
+            //    Enumerable.Range(1, 20).Select(id => new EventParticipant
+            //    {
+            //        Id = id,
+            //        UserId = "89fff030-be5c-40a2-903d-82f5c6ffef6a",
+            //        EventId = id,
+            //        Role = "Host",
+            //        JoinedAt = DateTime.Now
+            //    }).ToArray()
+            //);
         }
     }
 }
