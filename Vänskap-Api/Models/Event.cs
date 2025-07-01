@@ -17,6 +17,7 @@ namespace Vänskap_Api.Models
         public DateTime StartTime { get; set; } = DateTime.Now;
         public DateTime EndTime { get; set; } = DateTime.Now.AddDays(1);
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public string? Img { get; set; }
 
         public ICollection<EventInterest> EventInterests { get; set; } = new List<EventInterest>();
         public ICollection<EventParticipant> EventParticipants { get; set; } = new List<EventParticipant>();

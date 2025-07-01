@@ -20,7 +20,7 @@ namespace Vänskap_Api.Models.Dtos.Event
         public int? AgeRangeMin { get; set; }
         public int? AgeRangeMax { get; set; }
         public List<string>? Interests { get; set; }
-
+        public string? Img { get; set; }
 
     }
 }

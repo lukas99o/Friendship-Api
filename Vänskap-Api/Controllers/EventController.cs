@@ -112,26 +112,27 @@ namespace Vänskap_Api.Controllers
         {
             List<Event> events = new()
             {
-                new() { Title = "Cooking & Travel Night", IsPublic = true, CreatedByUserId = UserId },
-                new() { Title = "Photography Workshop", IsPublic = true, CreatedByUserId = UserId },
-                new() { Title = "Fitness Bootcamp", IsPublic = true, CreatedByUserId = UserId },
-                new() { Title = "Morning Run", IsPublic = true, CreatedByUserId = UserId },
-                new() { Title = "Hiking Adventure", IsPublic = true, CreatedByUserId = UserId },
-                new() { Title = "Book Club", IsPublic = true, CreatedByUserId = UserId },
-                new() { Title = "Hiking Trip", IsPublic = true, CreatedByUserId = UserId },
-                new() { Title = "Wine Tasting", IsPublic = true, CreatedByUserId = UserId },
-                new() { Title = "Sushi Workshop", IsPublic = true, CreatedByUserId = UserId },
-                new() { Title = "Beach Cleanup", IsPublic = true, CreatedByUserId = UserId },
-                new() { Title = "Stand-up Comedy", IsPublic = true, CreatedByUserId = UserId },
-                new() { Title = "Coffee Meetup", IsPublic = true, CreatedByUserId = UserId },
-                new() { Title = "Art & Chill", IsPublic = true, CreatedByUserId = UserId },
-                new() { Title = "Outdoor Yoga", IsPublic = true, CreatedByUserId = UserId },
-                new() { Title = "Language Exchange", IsPublic = true, CreatedByUserId = UserId },
-                new() { Title = "Bike Ride", IsPublic = true, CreatedByUserId = UserId },
-                new() { Title = "Movie Marathon", IsPublic = true, CreatedByUserId = UserId },
-                new() { Title = "Street Food Tour", IsPublic = true, CreatedByUserId = UserId },
-                new() { Title = "Photography Walk", IsPublic = true, CreatedByUserId = UserId },
-                new() { Title = "Midnight Picnic", IsPublic = true, CreatedByUserId = UserId }
+                new() { Title = "Cooking & Travel Night", IsPublic = true, CreatedByUserId = UserId, Img = "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80" }, // matlagning
+                new() { Title = "Photography Workshop", IsPublic = true, CreatedByUserId = UserId, Img = "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80" }, // kamera
+                new() { Title = "Fitness Bootcamp", IsPublic = true, CreatedByUserId = UserId, Img = "https://plus.unsplash.com/premium_photo-1726086677610-56498e65eed4?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" }, // träning
+                new() { Title = "Morning Run", IsPublic = true, CreatedByUserId = UserId, Img = "https://images.unsplash.com/photo-1508609349937-5ec4ae374ebf?auto=format&fit=crop&w=800&q=80" }, // löpning
+                new() { Title = "Hiking Adventure", IsPublic = true, CreatedByUserId = UserId, Img = "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=800&q=80" }, // vandring
+                new() { Title = "Book Club", IsPublic = true, CreatedByUserId = UserId, Img = "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=800&q=80" }, // böcker
+                new() { Title = "Hiking Trip", IsPublic = true, CreatedByUserId = UserId, Img = "https://images.unsplash.com/photo-1470770903676-69b98201ea1c?auto=format&fit=crop&w=800&q=80" }, // vandring
+                new() { Title = "Wine Tasting", IsPublic = true, CreatedByUserId = UserId, Img = "https://images.unsplash.com/photo-1631118473337-dc07ccf892d2?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" }, // vinprovning
+                new() { Title = "Sushi Workshop", IsPublic = true, CreatedByUserId = UserId, Img = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80" }, // sushi
+                new() { Title = "Beach Cleanup", IsPublic = true, CreatedByUserId = UserId, Img = "https://images.unsplash.com/photo-1644579156448-fd9346f7a333?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHN0cmFuZHN0JUMzJUE0ZG5pbmd8ZW58MHx8MHx8fDA%3D" }, // strandstädning
+                new() { Title = "Stand-up Comedy", IsPublic = true, CreatedByUserId = UserId, Img = "https://plus.unsplash.com/premium_photo-1705883064233-e56b05f42b07?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8Y29tZWR5fGVufDB8fDB8fHww" }, // komedi
+                new() { Title = "Coffee Meetup", IsPublic = true, CreatedByUserId = UserId, Img = "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80" }, // kaffe
+                new() { Title = "Art & Chill", IsPublic = true, CreatedByUserId = UserId, Img = "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=800&q=80" }, // konst
+                new() { Title = "Outdoor Yoga", IsPublic = true, CreatedByUserId = UserId, Img = "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80" }, // yoga utomhus
+                new() { Title = "Language Exchange", IsPublic = true, CreatedByUserId = UserId, Img = "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80" }, // språk
+                new() { Title = "Bike Ride", IsPublic = true, CreatedByUserId = UserId, Img = "https://images.unsplash.com/photo-1688136406066-4a7964d3db30?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fGN5a2xhfGVufDB8fDB8fHww" }, // cykling
+                new() { Title = "Movie Marathon", IsPublic = true, CreatedByUserId = UserId, Img = "https://plus.unsplash.com/premium_photo-1661675440353-6a6019c95bc7?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8bW92aWV8ZW58MHx8MHx8fDA%3D" }, // filmkväll
+                new() { Title = "Street Food Tour", IsPublic = true, CreatedByUserId = UserId, Img = "https://images.unsplash.com/photo-1603088549155-6ae9395b928f?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHN0cmVldCUyMGZvb2R8ZW58MHx8MHx8fDA%3D" }, // street food
+                new() { Title = "Photography Walk", IsPublic = true, CreatedByUserId = UserId, Img = "https://plus.unsplash.com/premium_photo-1664301085009-470198636a73?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Zm90b2dyYWZpfGVufDB8fDB8fHww" }, // foto promenad
+                new() { Title = "Midnight Picnic", IsPublic = true, CreatedByUserId = UserId, Img = "https://images.unsplash.com/photo-1626450780751-d0d764738e86?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cGljbmljJTIwbmlnaHR8ZW58MHx8MHx8fDA%3D" }, // nattpicknick
+
             };
 
             await _context.AddRangeAsync(events);

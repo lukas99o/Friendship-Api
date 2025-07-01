@@ -46,7 +46,8 @@ namespace Vänskap_Api.Service
                 AgeRangeMax = createEvent.AgeRangeMax,
                 AgeRangeMin = createEvent.AgeRangeMin,
                 IsPublic = createEvent.IsPublic,
-                Location = createEvent.Location
+                Location = createEvent.Location,
+                Img = createEvent.Img
             };
 
             await _context.Events.AddAsync(createObj);
@@ -99,7 +100,8 @@ namespace Vänskap_Api.Service
                     AgeRangeMin = createObj.AgeRangeMin,
                     Interests = interests.Select(i => i.Name).ToList(),
                     EventParticipants = eventParticiantList,
-                    IsPublic = createObj.IsPublic
+                    IsPublic = createObj.IsPublic,
+                    Img = createObj.Img
                 };
 
                 return evnt;
@@ -159,6 +161,7 @@ namespace Vänskap_Api.Service
                 Location = r.Location,
                 AgeRangeMax = r.AgeRangeMax,
                 AgeRangeMin = r.AgeRangeMin,
+                Img = r.Img,
                 Interests = r.EventInterests?.Select(i => i.Interest != null ? i.Interest.Name : "").ToList(),
                 EventParticipants = r.EventParticipants.Select(p => new EventParticipantDto
                 {
@@ -197,6 +200,7 @@ namespace Vänskap_Api.Service
                 Location = e.Location,
                 AgeRangeMax = e.AgeRangeMax,
                 AgeRangeMin = e.AgeRangeMin,
+                Img = e.Img,
                 Interests = e.EventInterests?.Select(i => i.Interest != null ? i.Interest.Name : "").ToList(),
                 EventParticipants = e.EventParticipants.Select(p => new EventParticipantDto
                 {
@@ -230,6 +234,7 @@ namespace Vänskap_Api.Service
                     Location = result.Location,
                     AgeRangeMax = result.AgeRangeMax,
                     AgeRangeMin = result.AgeRangeMin,
+                    Img = result.Img,
                     Interests = result.EventInterests?.Select(i => i.Interest != null ? i.Interest.Name : "").ToList(),
                     EventParticipants = result.EventParticipants.Select(p => new EventParticipantDto
                     {
@@ -262,6 +267,7 @@ namespace Vänskap_Api.Service
                     Location = result.Location,
                     AgeRangeMax = result.AgeRangeMax,
                     AgeRangeMin = result.AgeRangeMin,
+                    Img = result.Img,
                     Interests = result.EventInterests?.Select(i => i.Interest != null ? i.Interest.Name : "").ToList(),
                     EventParticipants = result.EventParticipants.Select(p => new EventParticipantDto
                     {
@@ -312,6 +318,7 @@ namespace Vänskap_Api.Service
                 evnt.IsPublic = updateEvent.IsPublic;
                 evnt.StartTime = updateEvent.StartTime;
                 evnt.EndTime = updateEvent.EndTime;
+                evnt.Img = updateEvent.Img;
 
                 _context.Update(evnt);
                 await _context.SaveChangesAsync();
