@@ -87,6 +87,11 @@ namespace Vänskap_Api
                 };
             });
 
+            builder.WebHost.ConfigureKestrel(serverOptions =>
+            {
+                serverOptions.ListenAnyIP(8080);
+            });
+
             builder.Services.AddScoped<IEventService, EventService>();
             builder.Services.AddScoped<IFriendshipService, FriendshipService>();
             builder.Services.AddScoped<IConversationService, ConversationService>();
@@ -107,10 +112,17 @@ namespace Vänskap_Api
 
             app.MapControllers();
 
-            using (var scope = app.Services.CreateScope())
+            try
             {
-                var services = scope.ServiceProvider;
-                await SeedData.SeedAdminAsync(services);
+                using (var scope = app.Services.CreateScope())
+                {
+                    var services = scope.ServiceProvider;
+                    await SeedData.SeedAdminAsync(services);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ SeedAdminAsync misslyckades: {ex.Message}");
             }
 
             await app.RunAsync();
