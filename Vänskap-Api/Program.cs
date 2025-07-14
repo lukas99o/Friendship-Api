@@ -27,7 +27,7 @@ namespace Vänskap_Api
             {
                 options.AddPolicy("AllowFrontend", policy =>
                 {
-                    policy.WithOrigins("https://ashy-stone-09b187203.2.azurestaticapps.net/")
+                    policy.WithOrigins("https://ashy-stone-09b187203.2.azurestaticapps.net")
                         .AllowAnyHeader()
                         .AllowAnyMethod()
                         .AllowCredentials();
