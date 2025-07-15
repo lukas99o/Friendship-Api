@@ -16,7 +16,7 @@ namespace Vänskap_Api.Service
         private readonly ApplicationDbContext _context;
         private readonly IHttpContextAccessor _contextAccessor;
         private string UserId => _contextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? throw new ArgumentNullException(nameof(UserId));
-        private string UserName => _contextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? throw new ArgumentNullException(nameof(UserName)); 
+        private string UserName => _contextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? throw new ArgumentNullException(nameof(UserName)); 
 
         public EventService(ApplicationDbContext context, IHttpContextAccessor contextAssessor)
         {
@@ -217,7 +217,9 @@ namespace Vänskap_Api.Service
         {
             var result = await _context.Events
                 .Include(e => e.EventInterests)
+                .ThenInclude(ei => ei.Interest)
                 .Include(e => e.EventParticipants)
+                .ThenInclude(ep => ep.User)
                 .FirstOrDefaultAsync(e => e.Id == id);
             if (result == null) return null;
 
@@ -238,7 +240,7 @@ namespace Vänskap_Api.Service
                     Interests = result.EventInterests?.Select(i => i.Interest != null ? i.Interest.Name : "").ToList(),
                     EventParticipants = result.EventParticipants.Select(p => new EventParticipantDto
                     {
-                        UserName = UserName,
+                        UserName = p.User?.UserName,
                         Role = p.Role,
                     }).ToList(),
                     IsPublic = result.IsPublic
