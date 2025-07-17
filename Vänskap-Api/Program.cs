@@ -67,6 +67,10 @@ namespace Vänskap_Api
                 options.UseSqlServer(Environment.GetEnvironmentVariable("ConnectionString")));
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>().
                 AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+            builder.Services.Configure<IdentityOptions>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+            });
 
             builder.Services.AddAuthentication(options =>
             {
