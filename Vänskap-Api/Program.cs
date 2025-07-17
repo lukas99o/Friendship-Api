@@ -91,6 +91,8 @@ namespace Vänskap_Api
                 };
             });
 
+            builder.Services.AddScoped<IEmailService, EmailService>();
+
             builder.Services.AddScoped<IEventService, EventService>();
             builder.Services.AddScoped<IFriendshipService, FriendshipService>();
             builder.Services.AddScoped<IConversationService, ConversationService>();

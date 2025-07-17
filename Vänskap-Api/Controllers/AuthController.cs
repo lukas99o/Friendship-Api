@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using Vänskap_Api.Models;
 using Vänskap_Api.Models.Dtos.User;
+using Vänskap_Api.Service.IService;
 
 namespace Vänskap_Api.Controllers
 {
@@ -15,11 +16,13 @@ namespace Vänskap_Api.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IEmailService _emailService;
 
-        public AuthController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public AuthController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IEmailService emailService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _emailService = emailService;
         }
 
         [HttpPost("Login")]
@@ -29,6 +32,10 @@ namespace Vänskap_Api.Controllers
  
             if (user == null || !await _userManager.CheckPasswordAsync(user, login.Password) || string.IsNullOrEmpty(user.UserName))
                 return Unauthorized();
+
+            if (await _userManager.IsEmailConfirmedAsync(user)) 
+                return Unauthorized("Du måste bekräfta din e-post först.");
+
             var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
 
             var claims = new List<Claim>
@@ -65,6 +72,12 @@ namespace Vänskap_Api.Controllers
                 DateOfBirth = register.DateOfBirth
             };
 
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var confirmationLink = $"http://localhost:5173/confirm-email?userId={user.Id}&token={Uri.EscapeDataString(token)}";
+
+            await _emailService.SendEmailAsync(user.Email, "Bekräfta din e-post",
+                $"Klicka <a href=\"{confirmationLink}\">här</a> för att bekräfta din e-post.");
+
             var result = await _userManager.CreateAsync(user, register.Password);
             await _userManager.AddToRoleAsync(user, "User");
 
@@ -75,6 +88,21 @@ namespace Vänskap_Api.Controllers
             }
 
             return Ok("Registrering lyckades");
+        }
+
+        [HttpGet("ConfirmEmail")] 
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null) return NotFound("Användare hittades inte.");
+
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+            if (!result.Succeeded)
+            {
+                return BadRequest("Bekräftelsen misslyckades.");
+            }
+
+            return Ok("E-post bekräftad!");
         }
     }
 }
