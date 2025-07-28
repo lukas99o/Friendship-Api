@@ -17,10 +17,12 @@ namespace Vänskap_Api.Service
             };
 
             using var smtp = new SmtpClient();
-            await smtp.ConnectAsync("smtp.outlook.com", 587, false);
-            await smtp.AuthenticateAsync("friendshipandevents@outlook.com", "ltjoszwdmumdtrin");
+            await smtp.ConnectAsync("smtp-relay.brevo.com", 587, MailKit.Security.SecureSocketOptions.StartTls);
+            await smtp.AuthenticateAsync("92c0e1001@smtp-brevo.com", "VsCD4WUFhqI7xnMH");
             await smtp.SendAsync(email);
             await smtp.DisconnectAsync(true);
         }
     }
 }
+
+

@@ -33,7 +33,7 @@ namespace Vänskap_Api.Controllers
             if (user == null || !await _userManager.CheckPasswordAsync(user, login.Password) || string.IsNullOrEmpty(user.UserName))
                 return Unauthorized();
 
-            if (await _userManager.IsEmailConfirmedAsync(user)) 
+            if (!await _userManager.IsEmailConfirmedAsync(user)) 
                 return Unauthorized("Du måste bekräfta din e-post först.");
 
             var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
@@ -70,7 +70,29 @@ namespace Vänskap_Api.Controllers
                 FirstName = register.FirstName,
                 LastName = register.LastName,
                 DateOfBirth = register.DateOfBirth
-            };
+            }; 
+
+            var result = await _userManager.CreateAsync(user, register.Password);
+
+            if (!result.Succeeded)
+            {
+                var errors = result.Errors.ToList();
+
+                if (errors.Any(e => e.Code == "DuplicateUserName"))
+                {
+                    return BadRequest("Användarnamnet är redan taget.");
+                }
+
+                if (errors.Any(e => e.Code == "DuplicateEmail"))
+                {
+                    return BadRequest("E-postadressen används redan.");
+                }
+
+                var allErrors = errors.Select(e => e.Description);
+                return BadRequest(new { message = "Registrering misslyckades.", errors = allErrors });
+            }
+
+            await _userManager.AddToRoleAsync(user, "User");
 
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var confirmationLink = $"http://localhost:5173/confirm-email?userId={user.Id}&token={Uri.EscapeDataString(token)}";
@@ -78,25 +100,38 @@ namespace Vänskap_Api.Controllers
             await _emailService.SendEmailAsync(user.Email, "Bekräfta din e-post",
                 $"Klicka <a href=\"{confirmationLink}\">här</a> för att bekräfta din e-post.");
 
-            var result = await _userManager.CreateAsync(user, register.Password);
-            await _userManager.AddToRoleAsync(user, "User");
-
-            if (!result.Succeeded)
-            {
-                var errors = result.Errors.Select(e => e.Description);
-                return BadRequest(new { Errors  = errors });
-            }
-
-            return Ok("Registrering lyckades");
+            return Ok(new { message = "Registrering lyckades", link = confirmationLink });
         }
 
-        [HttpGet("ConfirmEmail")] 
+        [HttpGet("resend-email")]
+        public async Task<IActionResult> ResendConfirmationLink(string email, string token)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                return NotFound("Användare hittades inte.");
+            }
+            else
+            {
+                var confirmationLink = $"http://localhost:5173/confirm-email?userId={user.Id}&token={Uri.EscapeDataString(token)}";
+
+                await _emailService.SendEmailAsync(user.Email!, "Bekräfta din e-post",
+                    $"Klicka <a href=\"{confirmationLink}\">här</a> för att bekräfta din e-post.");
+
+                return Ok("Bekräftelse mail skickat! Kontrollera din inkorg. Om du inte ser det, kolla skräpposten.");
+            }
+        }
+
+        [HttpPost("Confirm-Email")] 
         public async Task<IActionResult> ConfirmEmail(string userId, string token)
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null) return NotFound("Användare hittades inte.");
 
-            var result = await _userManager.ConfirmEmailAsync(user, token);
+            var decodedToken = Uri.UnescapeDataString(token);
+
+            var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
             if (!result.Succeeded)
             {
                 return BadRequest("Bekräftelsen misslyckades.");
