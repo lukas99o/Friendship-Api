@@ -100,11 +100,11 @@ namespace Vänskap_Api.Controllers
             await _emailService.SendEmailAsync(user.Email, "Bekräfta din e-post",
                 $"Klicka <a href=\"{confirmationLink}\">här</a> för att bekräfta din e-post.");
 
-            return Ok(new { message = "Registrering lyckades", link = confirmationLink });
+            return Ok("Registrering lyckades");
         }
 
-        [HttpGet("resend-email")]
-        public async Task<IActionResult> ResendConfirmationLink(string email, string token)
+        [HttpPost("resend-email")]
+        public async Task<IActionResult> ResendConfirmationLink(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
 
@@ -114,6 +114,7 @@ namespace Vänskap_Api.Controllers
             }
             else
             {
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 var confirmationLink = $"http://localhost:5173/confirm-email?userId={user.Id}&token={Uri.EscapeDataString(token)}";
 
                 await _emailService.SendEmailAsync(user.Email!, "Bekräfta din e-post",
