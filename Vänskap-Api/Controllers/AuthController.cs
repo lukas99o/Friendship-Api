@@ -95,7 +95,7 @@ namespace Vänskap_Api.Controllers
             await _userManager.AddToRoleAsync(user, "User");
 
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            var confirmationLink = $"https://friendship-c3cfdgejf5ateyc2.swedencentral-01.azurewebsites.net/confirm-email?userId={user.Id}&token={Uri.EscapeDataString(token)}";
+            var confirmationLink = $"https://ashy-stone-09b187203.2.azurestaticapps.net/confirm-email?userId={user.Id}&token={Uri.EscapeDataString(token)}";
 
             await _emailService.SendEmailAsync(user.Email, "Bekräfta din e-post",
                 $"Klicka <a href=\"{confirmationLink}\">här</a> för att bekräfta din e-post.");
@@ -115,7 +115,7 @@ namespace Vänskap_Api.Controllers
             else
             {
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                var confirmationLink = $"https://friendship-c3cfdgejf5ateyc2.swedencentral-01.azurewebsites.net/confirm-email?userId={user.Id}&token={Uri.EscapeDataString(token)}";
+                var confirmationLink = $"https://ashy-stone-09b187203.2.azurestaticapps.net/confirm-email?userId={user.Id}&token={Uri.EscapeDataString(token)}";
 
                 await _emailService.SendEmailAsync(user.Email!, "Bekräfta din e-post",
                     $"Klicka <a href=\"{confirmationLink}\">här</a> för att bekräfta din e-post.");
