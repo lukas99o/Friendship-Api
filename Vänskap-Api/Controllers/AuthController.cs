@@ -96,9 +96,12 @@ namespace Vänskap_Api.Controllers
 
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var confirmationLink = $"http://localhost:5173/confirm-email?userId={user.Id}&token={Uri.EscapeDataString(token)}";
+            var htmlTemplate = await System.IO.File.ReadAllTextAsync("EmailTemplates/ConfirmEmail.html");
+            var htmlBody = htmlTemplate
+                .Replace("{FirstName}", user.FirstName)
+                .Replace("{confirmationLink}", confirmationLink);
 
-            await _emailService.SendEmailAsync(user.Email, "Bekräfta din e-post",
-                $"Klicka <a href=\"{confirmationLink}\">här</a> för att bekräfta din e-post.");
+            await _emailService.SendEmailAsync(user.Email, "Bekräfta din e-post", htmlBody);
 
             return Ok("Registrering lyckades");
         }
@@ -116,9 +119,12 @@ namespace Vänskap_Api.Controllers
             {
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 var confirmationLink = $"http://localhost:5173/confirm-email?userId={user.Id}&token={Uri.EscapeDataString(token)}";
+                var htmlTemplate = await System.IO.File.ReadAllTextAsync("EmailTemplates/ConfirmEmail.html");
+                var htmlBody = htmlTemplate
+                    .Replace("{FirstName}", user.FirstName)
+                    .Replace("{confirmationLink}", confirmationLink);
 
-                await _emailService.SendEmailAsync(user.Email!, "Bekräfta din e-post",
-                    $"Klicka <a href=\"{confirmationLink}\">här</a> för att bekräfta din e-post.");
+                await _emailService.SendEmailAsync(user.Email!, "Bekräfta din e-post för att registrera dig i Vänskap", htmlBody);
 
                 return Ok("Bekräftelse mail skickat! Kontrollera din inkorg. Om du inte ser det, kolla skräpposten.");
             }
