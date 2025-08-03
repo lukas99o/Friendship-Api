@@ -64,7 +64,7 @@ namespace Vänskap_Api
             });
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(Environment.GetEnvironmentVariable("ConnectionString")));
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>().
                 AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
             builder.Services.Configure<IdentityOptions>(options =>
@@ -89,11 +89,6 @@ namespace Vänskap_Api
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("JwtKey")!)),
                     ClockSkew = TimeSpan.Zero
                 };
-            });
-
-            builder.WebHost.ConfigureKestrel(serverOptions =>
-            {
-                serverOptions.ListenAnyIP(8080);
             });
 
             builder.Services.AddScoped<IEmailService, EmailService>();
