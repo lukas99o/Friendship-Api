@@ -3,7 +3,6 @@ using Vänskap_Api.Models;
 using Vänskap_Api.Service.IService;
 using System.Security.Claims;
 using Vänskap_Api.Data;
-using Azure.Identity;
 using Vänskap_Api.Models.Dtos.Conversation;
 
 namespace Vänskap_Api.Service

@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
-using Microsoft.OpenApi.Extensions;
+﻿using Microsoft.EntityFrameworkCore;
 using Sprache;
 using System.Security.Claims;
 using Vänskap_Api.Data;

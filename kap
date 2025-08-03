@@ -1,0 +1,29 @@
+[33mf6fd8f5[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m)[m azure first try
+[33m9239781[m Update deploy.yml
+[33maf29a02[m Create deploy.yml
+[33m8b15b65[m Merge pull request #10 from lukas99o/development
+[33m99d5528[m[33m ([m[1;31morigin/development[m[33m, [m[1;32mdevelopment[m[33m)[m important fixes
+[33mfb0482e[m Merge pull request #9 from lukas99o/Fixar-Min-Databas
+[33md2cc23d[m Fixade problem med att databasen var beroende av ett användar id. Lägg aldrig in användar id i databasen när den skapas.
+[33m4d1ff46[m Merge pull request #8 from lukas99o/event-join-participant-status
+[33m6074a44[m Skapat event participant status
+[33m4bd614b[m small changes next time don't work in development branch
+[33md3a98f8[m Merge pull request #7 from lukas99o/Testing-FilterSystem
+[33m357f170[m Added database modifications like allowing the User to save a Collection of Conversations. Fixed bugs in 2 functions in EventService. They failed to show interests and participants but now it works as expected.
+[33m91a83be[m Merge pull request #6 from lukas99o/FilterSystem-For-Event
+[33m5a349b0[m Created Filtersystem for events.
+[33m6832bfb[m work in progress
+[33m90c74c0[m Merge pull request #5 from lukas99o/Testing-FriendshipController-ConversationController
+[33mbefd962[m Update temp.txt
+[33me500dfe[m work in progress
+[33m882a9c0[m Add files via upload
+[33mca55c63[m Merge pull request #4 from lukas99o/FriendshipController-ConversationController-FriendshipService-ConversationService
+[33m3a86813[m Not done.
+[33m0e1538e[m Merge pull request #3 from lukas99o/AuthController
+[33mf375ddd[m Updated ApplicationUser to store CreatedEvents. Created AuthController with jwt token as validation. Updated EventController with Authorize functionality.
+[33m0e51265[m Merge pull request #2 from lukas99o/Event-Service-and-Controller
+[33m7dcbc6f[m Removing (required) data annotation from database models and changing some values to allow null values in the database. Creating new migration with these changes. Adding 100 interests to the database. Seeding Admin. Fixing how interest is in relation to user and event. Creating event service and controller with for now all the functionality i want except gathering the username from the session to set at the eventparticipant username. Also changed eventparticipant to contain the ApplicationUser UserName.
+[33m0a9f27b[m Merge pull request #1 from lukas99o/Creating-The-Database
+[33m9259038[m Created the first instance of the database with 1 migration.
+[33m2ce10a7[m Add project files.
+[33mc2dd2d1[m Add .gitattributes and .gitignore.

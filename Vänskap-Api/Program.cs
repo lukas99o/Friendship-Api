@@ -27,7 +27,7 @@ namespace Vänskap_Api
             {
                 options.AddPolicy("AllowFrontend", policy =>
                 {
-                    policy.WithOrigins("http://localhost:5173")
+                    policy.WithOrigins("https://ashy-stone-09b187203.2.azurestaticapps.net")
                         .AllowAnyHeader()
                         .AllowAnyMethod()
                         .AllowCredentials();
@@ -64,7 +64,7 @@ namespace Vänskap_Api
             });
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Environment.GetEnvironmentVariable("ConnectionString")));
+                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>().
                 AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
             builder.Services.Configure<IdentityOptions>(options =>
@@ -91,8 +91,12 @@ namespace Vänskap_Api
                 };
             });
 
-            builder.Services.AddScoped<IEmailService, EmailService>();
+            builder.WebHost.ConfigureKestrel(serverOptions =>
+            {
+                serverOptions.ListenAnyIP(8080);
+            });
 
+            builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<IEventService, EventService>();
             builder.Services.AddScoped<IFriendshipService, FriendshipService>();
             builder.Services.AddScoped<IConversationService, ConversationService>();
@@ -113,10 +117,17 @@ namespace Vänskap_Api
 
             app.MapControllers();
 
-            using (var scope = app.Services.CreateScope())
+            try
             {
-                var services = scope.ServiceProvider;
-                await SeedData.SeedAdminAsync(services);
+                using (var scope = app.Services.CreateScope())
+                {
+                    var services = scope.ServiceProvider;
+                    await SeedData.SeedAdminAsync(services);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ SeedAdminAsync misslyckades: {ex.Message}");
             }
 
             await app.RunAsync();
