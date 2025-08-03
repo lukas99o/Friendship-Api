@@ -144,7 +144,7 @@ namespace Vänskap_Api.Controllers
                 UserId = UserId,
                 EventId = e.Id,
                 Role = "Host",
-                JoinedAt = DateTime.Now
+                JoinedAt = DateTime.UtcNow
             }).ToList();
 
             var eventInterests = new List<EventInterest>

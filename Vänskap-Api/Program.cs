@@ -67,6 +67,10 @@ namespace Vänskap_Api
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>().
                 AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+            builder.Services.Configure<IdentityOptions>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+            });
 
             builder.Services.AddAuthentication(options =>
             {
@@ -92,6 +96,7 @@ namespace Vänskap_Api
                 serverOptions.ListenAnyIP(8080);
             });
 
+            builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<IEventService, EventService>();
             builder.Services.AddScoped<IFriendshipService, FriendshipService>();
             builder.Services.AddScoped<IConversationService, ConversationService>();

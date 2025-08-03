@@ -14,8 +14,8 @@ namespace Vänskap_Api.Models
         public int? AgeRangeMin { get; set; }
         public int? AgeRangeMax { get; set; }
         public bool IsPublic { get; set; } 
-        public DateTime StartTime { get; set; } = DateTime.Now;
-        public DateTime EndTime { get; set; } = DateTime.Now.AddDays(1);
+        public DateTime StartTime { get; set; } = DateTime.UtcNow;
+        public DateTime EndTime { get; set; } = DateTime.UtcNow.AddDays(1);
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public string? Img { get; set; }
 
