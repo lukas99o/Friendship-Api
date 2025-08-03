@@ -8,7 +8,7 @@ namespace Vänskap_Api.Models
         [Key]
         public int Id { get; set; }
 
-        public DateTime ReadAt { get; set; }
+        public DateTime ReadAt { get; set; } = DateTime.UtcNow;
 
         [ForeignKey("User")]
         public string? UserId { get; set; }
