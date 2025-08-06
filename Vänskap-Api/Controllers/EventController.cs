@@ -69,6 +69,18 @@ namespace Vänskap_Api.Controllers
             return Ok(await _eventService.GetAllFriendEvents());
         }
 
+        [HttpGet("my-created-events")]
+        public async Task<ActionResult<IEnumerable<ReadEventDto>>> GetMyCreatedEvents()
+        {
+            return Ok(await _eventService.GetMyCreatedEvents());
+        }
+
+        [HttpGet("my-joined-events")]
+        public async Task<ActionResult<IEnumerable<ReadEventDto>>> GetMyJoinedEvents()
+        {
+            return Ok(await _eventService.GetMyJoinedEvents());
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<ReadEventDto>> ReadEvent(int id)
         {

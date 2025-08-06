@@ -14,5 +14,7 @@ namespace Vänskap_Api.Service.IService
         Task<bool> DeleteEvent(int id);
         Task<List<string>> GetInterests();
         Task<List<int>> EventPartcipantStatus();
+        Task<IEnumerable<ReadEventDto>> GetMyCreatedEvents();
+        Task<IEnumerable<ReadEventDto>> GetMyJoinedEvents();
     }
 }

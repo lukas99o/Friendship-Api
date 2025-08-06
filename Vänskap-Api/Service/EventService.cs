@@ -447,5 +447,43 @@ namespace Vänskap_Api.Service
 
             return events;
         }
+
+        public async Task<IEnumerable<ReadEventDto>> GetMyCreatedEvents()
+        {
+            var events = await _context.Events
+                .Where(e => e.CreatedByUserId == UserId)
+                .Select(e => new ReadEventDto
+                {
+                    EventId = e.Id,
+                    Title = e.Title,
+                    Description = e.Description,
+                    StartTime = e.StartTime,
+                    EndTime = e.EndTime,
+                    Location = e.Location,
+                    UserId = e.CreatedByUserId
+                })
+                .ToListAsync();
+
+            return events;
+        }
+
+        public async Task<IEnumerable<ReadEventDto>> GetMyJoinedEvents()
+        {
+            var events = await _context.Events
+                .Where(e => e.EventParticipants.Any(ep => ep.UserId == UserId))
+                .Select(e => new ReadEventDto
+                {
+                    EventId = e.Id,
+                    Title = e.Title,
+                    Description = e.Description,
+                    StartTime = e.StartTime,
+                    EndTime = e.EndTime,
+                    Location = e.Location,
+                    UserId = e.CreatedByUserId
+                })
+                .ToListAsync();
+
+            return events;
+        }
     }
 }
