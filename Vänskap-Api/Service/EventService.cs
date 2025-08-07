@@ -460,7 +460,8 @@ namespace Vänskap_Api.Service
                     StartTime = e.StartTime,
                     EndTime = e.EndTime,
                     Location = e.Location,
-                    UserId = e.CreatedByUserId
+                    UserId = e.CreatedByUserId,
+                    Img = e.Img
                 })
                 .ToListAsync();
 
@@ -479,7 +480,8 @@ namespace Vänskap_Api.Service
                     StartTime = e.StartTime,
                     EndTime = e.EndTime,
                     Location = e.Location,
-                    UserId = e.CreatedByUserId
+                    UserId = e.CreatedByUserId,
+                    Img = e.Img
                 })
                 .ToListAsync();
 
