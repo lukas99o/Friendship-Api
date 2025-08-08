@@ -210,6 +210,72 @@ namespace Vänskap_Api.Service
             return eventList;
         }
 
+        public async Task<IEnumerable<ReadEventDto>> GetUnjoinedEvents(List<string?> interests, int? ageMin, int? ageMax)
+        {
+            var query = _context.Events
+                .Include(e => e.EventParticipants)
+                    .ThenInclude(ep => ep.User)
+                .Include(e => e.EventInterests)
+                    .ThenInclude(ei => ei.Interest)
+                .Where(e => e.IsPublic &&
+                    !e.EventParticipants.Any(ep => ep.UserId == UserId));
+
+
+            var interestIds = new List<int>();
+            if (interests != null)
+            {
+                interestIds = await _context.Interests
+                .Where(i => interests.Contains(i.Name))
+                .Select(i => i.Id)
+                .ToListAsync();
+            }
+
+            if (ageMin != null && ageMax != null)
+            {
+                if (ageMin > ageMax) return new List<ReadEventDto>();
+
+                query = query.Where(e => e.AgeRangeMax >= ageMin && e.AgeRangeMin <= ageMax);
+            }
+            else if (ageMin != null)
+            {
+                query = query.Where(e => e.AgeRangeMax >= ageMin);
+            }
+            else if (ageMax != null)
+            {
+                query = query.Where(e => e.AgeRangeMin >= ageMax);
+            }
+
+            if (interests != null && interests.Any(i => !string.IsNullOrEmpty(i)))
+            {
+                query = query.Where(e => e.EventInterests!.Any(i => interestIds.Contains(i.EventId)));
+            }
+
+            var result = await query.ToListAsync();
+
+            var eventList = result.Select(r => new ReadEventDto
+            {
+                EventId = r.Id,
+                UserId = r.CreatedByUserId,
+                Title = r.Title,
+                Description = r.Description,
+                StartTime = r.StartTime,
+                EndTime = r.EndTime,
+                Location = r.Location,
+                AgeRangeMax = r.AgeRangeMax,
+                AgeRangeMin = r.AgeRangeMin,
+                Img = r.Img,
+                Interests = r.EventInterests?.Select(i => i.Interest != null ? i.Interest.Name : "").ToList(),
+                EventParticipants = r.EventParticipants.Select(p => new EventParticipantDto
+                {
+                    UserName = p.User?.UserName,
+                    Role = p.Role,
+                }).ToList(),
+                IsPublic = r.IsPublic
+            }).ToList();
+
+            return eventList;
+        }
+
         public async Task<ReadEventDto?> ReadEvent(int id)
         {
             var result = await _context.Events
@@ -419,6 +485,24 @@ namespace Vänskap_Api.Service
         public async Task<bool> DeleteEvent(int id)
         {
             var deleteEvent = await _context.Events.SingleOrDefaultAsync(e => e.Id == id);
+
+            if (deleteEvent != null)
+            {
+                var eventParticipants = deleteEvent.EventParticipants;
+                _context.EventParticipants.RemoveRange(eventParticipants);
+                _context.Events.Remove(deleteEvent);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+
+            return false;
+        }
+
+        public async Task<bool> HostDeleteEvent(int id)
+        {
+            var deleteEvent = await _context.Events
+                .Include(e => e.EventParticipants)
+                .SingleOrDefaultAsync(e => e.Id == id && e.CreatedByUserId == UserId);
 
             if (deleteEvent != null)
             {

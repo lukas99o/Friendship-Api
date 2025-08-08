@@ -69,6 +69,12 @@ namespace Vänskap_Api.Controllers
             return Ok(await _eventService.GetAllFriendEvents());
         }
 
+        [HttpGet("unjoinedevents")]
+        public async Task<ActionResult<IEnumerable<ReadEventDto>>> ReadAllUnjoinedEvents(ReadAllPublicEventsDto dto)
+        {
+            return Ok(await _eventService.GetUnjoinedEvents(dto.Interests!, dto.AgeMin, dto.AgeMax));
+        }
+
         [HttpGet("my-created-events")]
         public async Task<ActionResult<IEnumerable<ReadEventDto>>> GetMyCreatedEvents()
         {
@@ -102,6 +108,14 @@ namespace Vänskap_Api.Controllers
         public async Task<IActionResult> DeleteEvent(int id)
         {
             var success = await _eventService.DeleteEvent(id);
+            if (!success) return NotFound();
+            return NoContent();
+        }
+
+        [HttpDelete("host-delete/{id}")]
+        public async Task<IActionResult> HostDeleteEvent(int id)
+        {
+            var success = await _eventService.HostDeleteEvent(id);
             if (!success) return NotFound();
             return NoContent();
         }

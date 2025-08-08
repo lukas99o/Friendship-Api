@@ -12,9 +12,11 @@ namespace Vänskap_Api.Service.IService
         Task<bool> JoinEvent(int id);
         Task<bool> LeaveEvent(int id);
         Task<bool> DeleteEvent(int id);
+        Task<bool> HostDeleteEvent(int id); 
         Task<List<string>> GetInterests();
         Task<List<int>> EventPartcipantStatus();
         Task<IEnumerable<ReadEventDto>> GetMyCreatedEvents();
         Task<IEnumerable<ReadEventDto>> GetMyJoinedEvents();
+        Task<IEnumerable<ReadEventDto>> GetUnjoinedEvents(List<string?> interests, int? ageMin, int? ageMax); 
     }
 }
