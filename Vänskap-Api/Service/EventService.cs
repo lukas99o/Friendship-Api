@@ -90,8 +90,12 @@ namespace Vänskap_Api.Service
                     UserId = createObj.CreatedByUserId,
                     Title = createObj.Title,
                     Description = createObj.Description,
-                    StartTime = createObj.StartTime,
-                    EndTime = createObj.EndTime,
+                    StartTime = createEvent.StartTime.Kind == DateTimeKind.Utc
+                        ? createEvent.StartTime
+                        : DateTime.SpecifyKind(createEvent.StartTime, DateTimeKind.Local).ToUniversalTime(),
+                    EndTime = createEvent.EndTime.Kind == DateTimeKind.Utc
+                        ? createEvent.EndTime
+                        : DateTime.SpecifyKind(createEvent.EndTime, DateTimeKind.Local).ToUniversalTime(),
                     Location = createObj.Location,
                     AgeRangeMax = createObj.AgeRangeMax,
                     AgeRangeMin = createObj.AgeRangeMin,
