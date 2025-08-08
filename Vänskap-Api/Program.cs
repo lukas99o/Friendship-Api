@@ -27,7 +27,7 @@ namespace Vänskap_Api
             {
                 options.AddPolicy("AllowFrontend", policy =>
                 {
-                    policy.WithOrigins("http://localhost:5173")
+                    policy.WithOrigins("https://ashy-stone-09b187203.2.azurestaticapps.net")
                         .AllowAnyHeader()
                         .AllowAnyMethod()
                         .AllowCredentials();
@@ -64,7 +64,7 @@ namespace Vänskap_Api
             });
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Environment.GetEnvironmentVariable("ConnectionString")));
+                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>().
                 AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
             builder.Services.Configure<IdentityOptions>(options =>
@@ -89,6 +89,11 @@ namespace Vänskap_Api
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("JwtKey")!)),
                     ClockSkew = TimeSpan.Zero
                 };
+            });
+
+            builder.WebHost.ConfigureKestrel(serverOptions =>
+            {
+                serverOptions.ListenAnyIP(8080);
             });
 
             builder.Services.AddScoped<IEmailService, EmailService>();

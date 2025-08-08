@@ -12,8 +12,8 @@ using Vänskap_Api.Data;
 namespace Vänskap_Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250803120648_ModifyingDateTimeValues")]
-    partial class ModifyingDateTimeValues
+    [Migration("20250808135526_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
