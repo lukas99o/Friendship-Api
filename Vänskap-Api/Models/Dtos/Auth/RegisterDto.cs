@@ -26,6 +26,6 @@ namespace Vänskap_Api.Models.Dtos.User
         public required string LastName { get; set; }
 
         [Required]
-        public DateTime DateOfBirth { get; set; }
+        public DateOnly DateOfBirth { get; set; }
     }
 }

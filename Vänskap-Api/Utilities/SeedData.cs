@@ -33,7 +33,7 @@ namespace Vänskap_Api.Utilities
                     EmailConfirmed = true,
                     FirstName = adminEmail,
                     LastName = adminEmail,
-                    DateOfBirth = DateTime.UtcNow
+                    DateOfBirth = DateOnly.FromDateTime(DateTime.UtcNow)
                 };
 
                 var result = await userManager.CreateAsync(user, adminPassword);

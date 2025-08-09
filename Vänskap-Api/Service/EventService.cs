@@ -407,8 +407,9 @@ namespace Vänskap_Api.Service
 
             if (result.IsPublic)
             {
-                var age = DateTime.Today.Year - user.DateOfBirth.Year;
-                if (user.DateOfBirth.Date > DateTime.Today.AddYears(-age)) age--;
+                var today = DateOnly.FromDateTime(DateTime.Today);
+                var age = today.Year - user.DateOfBirth.Year;
+                if (user.DateOfBirth > today.AddYears(-age)) age--;
 
                 if (result.AgeRangeMax == null && result.AgeRangeMin == null) canJoin = true;
                 else if (age >= result.AgeRangeMin && age <= result.AgeRangeMax) canJoin = true;
@@ -440,8 +441,9 @@ namespace Vänskap_Api.Service
                 var friendship = await _context.Friendships.SingleOrDefaultAsync(f => (f.UserId == UserId && f.FriendId == host.UserId) || (f.UserId == host.UserId && f.FriendId == UserId));
                 if (friendship == null) return false;
 
-                var age = DateTime.Today.Year - user.DateOfBirth.Year;
-                if (user.DateOfBirth.Date > DateTime.Today.AddYears(-age)) age--;
+                var today = DateOnly.FromDateTime(DateTime.Today);
+                var age = today.Year - user.DateOfBirth.Year;
+                if (user.DateOfBirth > today.AddYears(-age)) age--;
 
                 if (result.AgeRangeMax == null && result.AgeRangeMin == null) canJoin = true;
                 else if (age >= result.AgeRangeMin && age <= result.AgeRangeMax) canJoin = true;
