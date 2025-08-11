@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Asn1;
 using Sprache;
 using System.Security.Claims;
 using Vänskap_Api.Data;
@@ -604,6 +605,27 @@ namespace Vänskap_Api.Service
             }
 
             return false;
+        }
+
+        public async Task<IEnumerable<EventReceiveMessageDto>> GetEventMessages(int id)
+        {
+            var evnt = await _context.Events
+                .Include(e => e.Messages)
+                .SingleOrDefaultAsync(e => e.Id == id);
+
+            if (evnt == null)
+                return new List<EventReceiveMessageDto>();
+
+            var eventMessages = evnt.Messages
+                .Select(m => new EventReceiveMessageDto
+                {
+                    Content = m.Content,
+                    SenderId = m.SenderId,
+                    CreatedAt = m.CreatedAt,
+                })
+                .ToList();
+
+            return eventMessages;
         }
     }
 }
