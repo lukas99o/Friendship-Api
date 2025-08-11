@@ -17,6 +17,7 @@ namespace Vänskap_Api.Service.IService
         Task<List<int>> EventPartcipantStatus();
         Task<IEnumerable<ReadEventDto>> GetMyCreatedEvents();
         Task<IEnumerable<ReadEventDto>> GetMyJoinedEvents();
-        Task<IEnumerable<ReadEventDto>> GetUnjoinedEvents(List<string?> interests, int? ageMin, int? ageMax); 
+        Task<IEnumerable<ReadEventDto>> GetUnjoinedEvents(List<string?> interests, int? ageMin, int? ageMax);
+        Task<bool> SendMessage(int id, string text)
     }
 }

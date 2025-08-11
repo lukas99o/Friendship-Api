@@ -561,7 +561,7 @@ namespace Vänskap_Api.Service
         public async Task<IEnumerable<ReadEventDto>> GetMyJoinedEvents()
         {
             var events = await _context.Events
-                .Where(e => e.EventParticipants.Any(ep => ep.UserId == UserId))
+                .Where(e => e.EventParticipants.Any(ep => ep.UserId == UserId) && e.CreatedByUserId != UserId)
                 .Select(e => new ReadEventDto
                 {
                     EventId = e.Id,
@@ -576,6 +576,34 @@ namespace Vänskap_Api.Service
                 .ToListAsync();
 
             return events;
+        }
+
+        public async Task<bool> SendMessage(int id, string text)
+        {
+            var evnt = await _context.Events
+                .Include(e => e.EventParticipants)
+                .FirstOrDefaultAsync(e => e.Id == id);
+
+            if (evnt == null) return false;
+
+            var isParticipant = evnt.EventParticipants.Any(ep => ep.UserId == UserId);
+            if (!isParticipant) return false;
+
+            var message = new Message()
+            {
+                Content = text,
+                SenderId = UserId
+            };
+
+            if (message != null)
+            {
+                await _context.AddAsync(message);
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+
+            return false;
         }
     }
 }
