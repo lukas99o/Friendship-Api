@@ -288,6 +288,7 @@ namespace Vänskap_Api.Service
                 .ThenInclude(ei => ei.Interest)
                 .Include(e => e.EventParticipants)
                 .ThenInclude(ep => ep.User)
+                .Include(e => e.Messages)
                 .FirstOrDefaultAsync(e => e.Id == id);
             if (result == null) return null;
 
@@ -311,7 +312,13 @@ namespace Vänskap_Api.Service
                         UserName = p.User?.UserName,
                         Role = p.Role,
                     }).ToList(),
-                    IsPublic = result.IsPublic
+                    IsPublic = result.IsPublic,
+                    Messages = result.Messages.Select(m => new EventReceiveMessageDto
+                    {
+                        Content = m.Content,
+                        SenderId = m.SenderId,
+                        CreatedAt = m.CreatedAt,
+                    }).ToList()
                 };
 
                 return evnt;

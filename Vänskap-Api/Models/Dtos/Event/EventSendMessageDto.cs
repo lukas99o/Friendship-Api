@@ -2,11 +2,11 @@
 
 namespace Vänskap_Api.Models.Dtos.Event
 {
-    public class EventSendMessage
+    public class EventSendMessageDto
     {
         public int EventId { get; set; }
-
-        [Required]
         public required string Message { get; set; }
+        public required string SenderName { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }

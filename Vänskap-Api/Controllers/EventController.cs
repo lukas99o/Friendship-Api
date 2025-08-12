@@ -64,7 +64,7 @@ namespace Vänskap_Api.Controllers
         }
 
         [HttpPost("send-message")]
-        public async Task<IActionResult> SendMessage(EventSendMessage dto)
+        public async Task<IActionResult> SendMessage(EventSendMessageDto dto)
         {
             var result = await _eventService.SendMessage(dto.EventId, dto.Message);
 
@@ -98,6 +98,19 @@ namespace Vänskap_Api.Controllers
         public async Task<ActionResult<IEnumerable<ReadEventDto>>> GetMyJoinedEvents()
         {
             return Ok(await _eventService.GetMyJoinedEvents());
+        }
+
+        [HttpGet("event-messages")]
+        public async Task<ActionResult<IEnumerable<EventReceiveMessageDto>>> GetEventMessages(int id)
+        {
+            var messages = await _eventService.GetEventMessages(id);
+
+            if (messages == null || !messages.Any())
+            {
+                return NotFound("No messages found for this event.");
+            }
+
+            return Ok(messages);
         }
 
         [HttpGet("{id}")]

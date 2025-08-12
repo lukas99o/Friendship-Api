@@ -91,6 +91,8 @@ namespace Vänskap_Api
                 };
             });
 
+            builder.Services.AddSignalR();
+
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<IEventService, EventService>();
             builder.Services.AddScoped<IFriendshipService, FriendshipService>();
@@ -105,6 +107,7 @@ namespace Vänskap_Api
                 app.UseSwaggerUI();
             }
 
+            app.MapHub<MessageHub>("/messageHub");
             app.UseHttpsRedirection();
             app.UseCors("AllowFrontend");
             app.UseAuthentication();
