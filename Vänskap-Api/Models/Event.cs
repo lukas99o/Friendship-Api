@@ -18,7 +18,6 @@ namespace Vänskap_Api.Models
         public DateTime EndTime { get; set; } = DateTime.UtcNow.AddDays(1);
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public string? Img { get; set; }
-        public ICollection<Message> Messages { get; set; } = new List<Message>();
 
         public ICollection<EventInterest> EventInterests { get; set; } = new List<EventInterest>();
         public ICollection<EventParticipant> EventParticipants { get; set; } = new List<EventParticipant>();
@@ -26,5 +25,8 @@ namespace Vänskap_Api.Models
         [ForeignKey("CreatedByUser")]
         public required string CreatedByUserId { get; set; }
         public ApplicationUser? CreatedByUser { get; set; }
+
+        public int ConversationId { get; set; }
+        public Conversation? Conversation { get; set; }
     }
 }

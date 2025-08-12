@@ -107,13 +107,13 @@ namespace Vänskap_Api
                 app.UseSwaggerUI();
             }
 
-            app.MapHub<MessageHub>("/messageHub");
             app.UseHttpsRedirection();
             app.UseCors("AllowFrontend");
             app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();
+            app.MapHub<MessageHub>("/messageHub");
 
             try
             {

@@ -13,7 +13,7 @@ namespace Vänskap_Api.Models
         public required string Content { get; set; }
 
         [ForeignKey("Conversation")]
-        public int? ConversationId { get; set; }
+        public int ConversationId { get; set; }
         public Conversation? Conversation { get; set; }
 
         [ForeignKey("Sender")]
