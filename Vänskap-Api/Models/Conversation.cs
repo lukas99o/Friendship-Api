@@ -12,6 +12,7 @@ namespace Vänskap_Api.Models
         public ICollection<ConversationParticipant> ConversationParticipants { get; set; } = new List<ConversationParticipant>();
         public ICollection<Message> Messages { get; set; } = new List<Message>();
 
+        public int? EventId { get; set; }
         public Event? Event { get; set; }
     }
 }

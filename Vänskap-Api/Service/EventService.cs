@@ -24,7 +24,6 @@ namespace Vänskap_Api.Service
 
         public async Task<ReadEventDto?> CreateEvent(EventDto createEvent)
         {
-            var user = await _context.Users.FindAsync(UserId);
             var interests = new List<Interest>();
 
             if (createEvent.Interests != null)
@@ -45,71 +44,78 @@ namespace Vänskap_Api.Service
                 AgeRangeMin = createEvent.AgeRangeMin,
                 IsPublic = createEvent.IsPublic,
                 Location = createEvent.Location,
-                Img = createEvent.Img
+                Img = createEvent.Img,
+                EventInterests = new List<EventInterest>(),
+                EventParticipants = new List<EventParticipant>()
             };
 
             await _context.Events.AddAsync(createObj);
-            await _context.SaveChangesAsync();
-            
-            if (createObj != null)
+
+            foreach (var interest in interests)
             {
-                var eventParticipant = new EventParticipant()
+                createObj.EventInterests.Add(new EventInterest
                 {
-                    Role = "Host",
-                    UserId = UserId,
-                    EventId = createObj.Id
-                };
-
-                foreach (var interest in interests)
-                {
-                    var eventInterest = new EventInterest()
-                    {
-                        InterestId = interest.Id,
-                        EventId = createObj!.Id
-                    };
-
-                    createObj?.EventInterests?.Add(eventInterest);
-                }
-
-                createObj?.EventParticipants.Add(eventParticipant);
-                _context.Events.Update(createObj!);
-                await _context.EventParticipants.AddAsync(eventParticipant);
-                user?.CreatedEvents.Add(createObj!);
-                await _context.SaveChangesAsync();
-
-                var eventParticiantList = new List<EventParticipantDto>();
-                var eventParticipantDto = new EventParticipantDto()
-                {
-                    UserName = UserName,
-                    Role = eventParticipant.Role,
-                };
-                eventParticiantList.Add(eventParticipantDto);
-
-                var evnt = new ReadEventDto()
-                {
-                    EventId = createObj!.Id,
-                    UserId = createObj.CreatedByUserId,
-                    Title = createObj.Title,
-                    Description = createObj.Description,
-                    StartTime = createEvent.StartTime.Kind == DateTimeKind.Utc
-                        ? createEvent.StartTime
-                        : DateTime.SpecifyKind(createEvent.StartTime, DateTimeKind.Local).ToUniversalTime(),
-                    EndTime = createEvent.EndTime.Kind == DateTimeKind.Utc
-                        ? createEvent.EndTime
-                        : DateTime.SpecifyKind(createEvent.EndTime, DateTimeKind.Local).ToUniversalTime(),
-                    Location = createObj.Location,
-                    AgeRangeMax = createObj.AgeRangeMax,
-                    AgeRangeMin = createObj.AgeRangeMin,
-                    Interests = interests.Select(i => i.Name).ToList(),
-                    EventParticipants = eventParticiantList,
-                    IsPublic = createObj.IsPublic,
-                    Img = createObj.Img
-                };
-
-                return evnt;
+                    InterestId = interest.Id,
+                    EventId = createObj.Id 
+                });
             }
 
-            return null;
+            var eventParticipant = new EventParticipant()
+            {
+                Role = "Host",
+                UserId = UserId,
+                Event = createObj
+            };
+            createObj.EventParticipants.Add(eventParticipant);
+
+            var conversation = new Conversation()
+            {
+                Title = $"Chat för {createObj.Title}",
+                ConversationParticipants = new List<ConversationParticipant>()
+            };
+
+            var conversationParticipant = new ConversationParticipant()
+            {
+                UserId = UserId,
+                Role = "Host",
+                Conversation = conversation
+            };
+            conversation.ConversationParticipants.Add(conversationParticipant);
+
+            createObj.Conversation = conversation;
+
+            await _context.Conversations.AddAsync(conversation);
+
+            await _context.SaveChangesAsync();
+
+            var eventParticipantDtos = createObj.EventParticipants.Select(ep => new EventParticipantDto
+            {
+                UserName = UserName,
+                Role = ep.Role,
+            }).ToList();
+
+            var evnt = new ReadEventDto()
+            {
+                EventId = createObj.Id,
+                UserId = createObj.CreatedByUserId,
+                Title = createObj.Title,
+                Description = createObj.Description,
+                StartTime = createEvent.StartTime.Kind == DateTimeKind.Utc
+                    ? createEvent.StartTime
+                    : DateTime.SpecifyKind(createEvent.StartTime, DateTimeKind.Local).ToUniversalTime(),
+                EndTime = createEvent.EndTime.Kind == DateTimeKind.Utc
+                    ? createEvent.EndTime
+                    : DateTime.SpecifyKind(createEvent.EndTime, DateTimeKind.Local).ToUniversalTime(),
+                Location = createObj.Location,
+                AgeRangeMax = createObj.AgeRangeMax,
+                AgeRangeMin = createObj.AgeRangeMin,
+                Interests = interests.Select(i => i.Name).ToList(),
+                EventParticipants = eventParticipantDtos,
+                IsPublic = createObj.IsPublic,
+                Img = createObj.Img
+            };
+
+            return evnt;
         }
 
         public async Task<IEnumerable<ReadEventDto>> ReadAllPublicEvents(List<string?> interests, int? ageMin, int? ageMax)
