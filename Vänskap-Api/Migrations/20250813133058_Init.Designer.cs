@@ -12,8 +12,8 @@ using Vänskap_Api.Data;
 namespace Vänskap_Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250811132540_AddingMessagesInEvent")]
-    partial class AddingMessagesInEvent
+    [Migration("20250813133058_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -253,6 +253,9 @@ namespace Vänskap_Api.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("EventId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -307,6 +310,9 @@ namespace Vänskap_Api.Migrations
                     b.Property<int?>("AgeRangeMin")
                         .HasColumnType("int");
 
+                    b.Property<int>("ConversationId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -340,6 +346,9 @@ namespace Vänskap_Api.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ConversationId")
+                        .IsUnique();
 
                     b.HasIndex("CreatedByUserId");
 
@@ -986,14 +995,11 @@ namespace Vänskap_Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ConversationId")
+                    b.Property<int>("ConversationId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<int?>("EventId")
-                        .HasColumnType("int");
 
                     b.Property<string>("SenderId")
                         .IsRequired()
@@ -1002,8 +1008,6 @@ namespace Vänskap_Api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ConversationId");
-
-                    b.HasIndex("EventId");
 
                     b.HasIndex("SenderId");
 
@@ -1130,6 +1134,12 @@ namespace Vänskap_Api.Migrations
 
             modelBuilder.Entity("Vänskap_Api.Models.Event", b =>
                 {
+                    b.HasOne("Vänskap_Api.Models.Conversation", "Conversation")
+                        .WithOne("Event")
+                        .HasForeignKey("Vänskap_Api.Models.Event", "ConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Vänskap_Api.Models.ApplicationUser", "CreatedByUser")
                         .WithMany("CreatedEvents")
                         .HasForeignKey("CreatedByUserId")
@@ -1139,6 +1149,8 @@ namespace Vänskap_Api.Migrations
                     b.HasOne("Vänskap_Api.Models.Interest", null)
                         .WithMany("Events")
                         .HasForeignKey("InterestId");
+
+                    b.Navigation("Conversation");
 
                     b.Navigation("CreatedByUser");
                 });
@@ -1227,11 +1239,9 @@ namespace Vänskap_Api.Migrations
                 {
                     b.HasOne("Vänskap_Api.Models.Conversation", "Conversation")
                         .WithMany("Messages")
-                        .HasForeignKey("ConversationId");
-
-                    b.HasOne("Vänskap_Api.Models.Event", null)
-                        .WithMany("Messages")
-                        .HasForeignKey("EventId");
+                        .HasForeignKey("ConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Vänskap_Api.Models.ApplicationUser", "Sender")
                         .WithMany()
@@ -1299,6 +1309,8 @@ namespace Vänskap_Api.Migrations
                 {
                     b.Navigation("ConversationParticipants");
 
+                    b.Navigation("Event");
+
                     b.Navigation("Messages");
                 });
 
@@ -1307,8 +1319,6 @@ namespace Vänskap_Api.Migrations
                     b.Navigation("EventInterests");
 
                     b.Navigation("EventParticipants");
-
-                    b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("Vänskap_Api.Models.Interest", b =>

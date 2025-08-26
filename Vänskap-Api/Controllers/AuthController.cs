@@ -57,7 +57,7 @@ namespace Vänskap_Api.Controllers
                 signingCredentials: creds);
 
             var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-            return Ok(new { Token = tokenString });
+            return Ok(new { Token = tokenString, Username = user.UserName });
         }
 
         [HttpPost("Register")]

@@ -34,7 +34,8 @@ namespace Vänskap_Api.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EventId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -240,6 +241,7 @@ namespace Vänskap_Api.Migrations
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Img = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedByUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ConversationId = table.Column<int>(type: "int", nullable: false),
                     InterestId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -249,6 +251,12 @@ namespace Vänskap_Api.Migrations
                         name: "FK_Events_AspNetUsers_CreatedByUserId",
                         column: x => x.CreatedByUserId,
                         principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Events_Conversations_ConversationId",
+                        column: x => x.ConversationId,
+                        principalTable: "Conversations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -326,7 +334,7 @@ namespace Vänskap_Api.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ConversationId = table.Column<int>(type: "int", nullable: true),
+                    ConversationId = table.Column<int>(type: "int", nullable: false),
                     SenderId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
@@ -342,7 +350,8 @@ namespace Vänskap_Api.Migrations
                         name: "FK_Messages_Conversations_ConversationId",
                         column: x => x.ConversationId,
                         principalTable: "Conversations",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -622,6 +631,12 @@ namespace Vänskap_Api.Migrations
                 name: "IX_EventParticipants_UserId",
                 table: "EventParticipants",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Events_ConversationId",
+                table: "Events",
+                column: "ConversationId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Events_CreatedByUserId",

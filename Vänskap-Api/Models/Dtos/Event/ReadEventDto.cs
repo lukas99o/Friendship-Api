@@ -17,6 +17,6 @@ namespace Vänskap_Api.Models.Dtos.Event
         public List<EventParticipantDto>? EventParticipants { get; set; }
         public bool IsPublic { get; set; }
         public string? Img { get; set; }
-        public List<EventReceiveMessageDto>? Messages { get; set; }
+        public int ConversationId { get; set; }
     }
 }

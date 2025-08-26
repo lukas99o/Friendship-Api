@@ -71,7 +71,6 @@ namespace Vänskap_Api.Service
             var conversation = new Conversation()
             {
                 Title = $"Chat för {createObj.Title}",
-                ConversationParticipants = new List<ConversationParticipant>()
             };
 
             var conversationParticipant = new ConversationParticipant()
@@ -294,7 +293,7 @@ namespace Vänskap_Api.Service
                 .ThenInclude(ei => ei.Interest)
                 .Include(e => e.EventParticipants)
                 .ThenInclude(ep => ep.User)
-                .Include(e => e.Messages)
+                .Include(e => e.Conversation)
                 .FirstOrDefaultAsync(e => e.Id == id);
             if (result == null) return null;
 
@@ -319,12 +318,7 @@ namespace Vänskap_Api.Service
                         Role = p.Role,
                     }).ToList(),
                     IsPublic = result.IsPublic,
-                    Messages = result.Messages.Select(m => new EventReceiveMessageDto
-                    {
-                        Content = m.Content,
-                        SenderId = m.SenderId,
-                        CreatedAt = m.CreatedAt,
-                    }).ToList()
+                    ConversationId = result.Conversation?.Id ?? 0
                 };
 
                 return evnt;
@@ -620,25 +614,24 @@ namespace Vänskap_Api.Service
             return false;
         }
 
-        public async Task<IEnumerable<EventReceiveMessageDto>> GetEventMessages(int id)
-        {
-            var evnt = await _context.Events
-                .Include(e => e.Messages)
-                .SingleOrDefaultAsync(e => e.Id == id);
+        //public async Task<IEnumerable<EventReceiveMessageDto>> GetEventMessages(int id)
+        //{
+        //    var evnt = await _context.Events
+        //        .SingleOrDefaultAsync(e => e.Id == id);
 
-            if (evnt == null)
-                return new List<EventReceiveMessageDto>();
+        //    if (evnt == null)
+        //        return new List<EventReceiveMessageDto>();
 
-            var eventMessages = evnt.Messages
-                .Select(m => new EventReceiveMessageDto
-                {
-                    Content = m.Content,
-                    SenderId = m.SenderId,
-                    CreatedAt = m.CreatedAt,
-                })
-                .ToList();
+        //    var eventMessages = evnt.Messages
+        //        .Select(m => new EventReceiveMessageDto
+        //        {
+        //            Content = m.Content,
+        //            SenderId = m.SenderId,
+        //            CreatedAt = m.CreatedAt,
+        //        })
+        //        .ToList();
 
-            return eventMessages;
-        }
+        //    return eventMessages;
+        //}
     }
 }
