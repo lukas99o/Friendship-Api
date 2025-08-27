@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using Vänskap_Api.Data;
 using Vänskap_Api.Models;
 
@@ -28,7 +29,7 @@ namespace Vänskap_Api.Utilities
         public async Task SendMessage(int conversationId, string senderId, string content)
         {
             var participant = await _context.ConversationParticipants
-                .FindAsync(conversationId, senderId);
+                .FirstOrDefaultAsync(cp => cp.ConversationId == conversationId && cp.UserId == senderId);
 
             if (participant == null)
             {

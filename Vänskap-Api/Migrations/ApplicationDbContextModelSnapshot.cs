@@ -259,7 +259,7 @@ namespace Vänskap_Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Conversations");
+                    b.ToTable("Conversations", (string)null);
                 });
 
             modelBuilder.Entity("Vänskap_Api.Models.ConversationParticipant", b =>
@@ -290,7 +290,7 @@ namespace Vänskap_Api.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ConversationParticipants");
+                    b.ToTable("ConversationParticipants", (string)null);
                 });
 
             modelBuilder.Entity("Vänskap_Api.Models.Event", b =>
@@ -351,7 +351,7 @@ namespace Vänskap_Api.Migrations
 
                     b.HasIndex("InterestId");
 
-                    b.ToTable("Events");
+                    b.ToTable("Events", (string)null);
                 });
 
             modelBuilder.Entity("Vänskap_Api.Models.EventInterest", b =>
@@ -366,7 +366,7 @@ namespace Vänskap_Api.Migrations
 
                     b.HasIndex("InterestId");
 
-                    b.ToTable("EventInterest");
+                    b.ToTable("EventInterest", (string)null);
                 });
 
             modelBuilder.Entity("Vänskap_Api.Models.EventParticipant", b =>
@@ -397,7 +397,7 @@ namespace Vänskap_Api.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("EventParticipants");
+                    b.ToTable("EventParticipants", (string)null);
                 });
 
             modelBuilder.Entity("Vänskap_Api.Models.FriendRequest", b =>
@@ -425,7 +425,7 @@ namespace Vänskap_Api.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("FriendRequests");
+                    b.ToTable("FriendRequests", (string)null);
                 });
 
             modelBuilder.Entity("Vänskap_Api.Models.Friendship", b =>
@@ -458,7 +458,7 @@ namespace Vänskap_Api.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Friendships");
+                    b.ToTable("Friendships", (string)null);
                 });
 
             modelBuilder.Entity("Vänskap_Api.Models.Interest", b =>
@@ -475,7 +475,7 @@ namespace Vänskap_Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Interests");
+                    b.ToTable("Interests", (string)null);
 
                     b.HasData(
                         new
@@ -1008,7 +1008,7 @@ namespace Vänskap_Api.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("Messages");
+                    b.ToTable("Messages", (string)null);
                 });
 
             modelBuilder.Entity("Vänskap_Api.Models.MessageReadAt", b =>
@@ -1034,7 +1034,7 @@ namespace Vänskap_Api.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("MessageReadAt");
+                    b.ToTable("MessageReadAt", (string)null);
                 });
 
             modelBuilder.Entity("Vänskap_Api.Models.UserInterest", b =>
@@ -1049,7 +1049,7 @@ namespace Vänskap_Api.Migrations
 
                     b.HasIndex("InterestId");
 
-                    b.ToTable("UserInterest");
+                    b.ToTable("UserInterest", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
