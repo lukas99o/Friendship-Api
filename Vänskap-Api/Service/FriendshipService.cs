@@ -21,21 +21,26 @@ namespace Vänskap_Api.Service
             _contextAccessor = contextAccessor;
         }
 
-        public async Task<IEnumerable<string?>> SeeFriendList()
+        public async Task<IEnumerable<GetFriendsDto>> SeeFriendList()
         {
             var user = await _context.Users
                 .Include(u => u.Friendships)
                 .ThenInclude(f => f.Friend)
                 .SingleOrDefaultAsync(u => u.Id == UserId);
 
-            if (user == null) return Enumerable.Empty<string>();
-
-            var friendList = user.Friendships
-                .Select(f => f.Friend?.UserName)
+            var friendList = user?.Friendships
+                .Select(f => f.Friend)
                 .Where(f => f != null)
                 .ToList();
+
+            var friendListDto = friendList?.Select(f => new GetFriendsDto
+            {
+                Username = f.UserName,
+                Name = f.FirstName + " " + f.LastName,
+                Age = f.DateOfBirth
+            }).ToList();
             
-            return friendList;
+            return friendListDto ?? new List<GetFriendsDto>();
         }
 
         public async Task<bool> SendFriendRequest(string userName)
