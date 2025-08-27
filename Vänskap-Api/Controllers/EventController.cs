@@ -63,19 +63,6 @@ namespace Vänskap_Api.Controllers
             return Ok(await _eventService.ReadAllPublicEvents(dto.Interests!, dto.AgeMin, dto.AgeMax));
         }
 
-        [HttpPost("send-message")]
-        public async Task<IActionResult> SendMessage(EventSendMessageDto dto)
-        {
-            var result = await _eventService.SendMessage(dto.EventId, dto.Message);
-
-            if (!result)
-            {
-                return BadRequest("Message could not be sent.");
-            }
-
-            return Ok("Message delivered.");
-        }
-
         [HttpGet("friendsevents")]
         public async Task<ActionResult<IEnumerable<ReadEventDto>>> GetAllFriendEvents()
         {

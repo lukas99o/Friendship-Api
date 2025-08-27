@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Asn1;
 using Sprache;
+using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using Vänskap_Api.Data;
 using Vänskap_Api.Models;
@@ -294,6 +295,7 @@ namespace Vänskap_Api.Service
                 .Include(e => e.EventParticipants)
                 .ThenInclude(ep => ep.User)
                 .Include(e => e.Conversation)
+                .ThenInclude(c => c.Messages)
                 .FirstOrDefaultAsync(e => e.Id == id);
             if (result == null) return null;
 
@@ -318,7 +320,17 @@ namespace Vänskap_Api.Service
                         Role = p.Role,
                     }).ToList(),
                     IsPublic = result.IsPublic,
-                    ConversationId = result.Conversation?.Id ?? 0
+                    ConversationId = result.Conversation?.Id ?? 0,
+                    EventMessages = result.Conversation?.Messages
+                        .OrderBy(m => m.CreatedAt)
+                        .Select(m => new EventMessageDto
+                        {
+                            Content = m.Content,
+                            SenderId = m.SenderId,
+                            SenderName = m.Sender?.UserName,
+                            CreatedAt = m.CreatedAt,
+                            MessageId = m.Id
+                        }).ToList() ?? new List<EventMessageDto>()
                 };
 
                 return evnt;
@@ -351,7 +363,17 @@ namespace Vänskap_Api.Service
                         UserName = UserName,
                         Role = p.Role,
                     }).ToList(),
-                    IsPublic = result.IsPublic
+                    IsPublic = result.IsPublic,
+                    EventMessages = result.Conversation?.Messages
+                        .OrderBy(m => m.CreatedAt)
+                        .Select(m => new EventMessageDto
+                        {
+                            Content = m.Content,
+                            SenderId = m.SenderId,
+                            SenderName = m.Sender?.UserName,
+                            CreatedAt = m.CreatedAt,
+                            MessageId = m.Id
+                        }).ToList() ?? new List<EventMessageDto>()
                 };
 
                 return evnt;
@@ -407,7 +429,7 @@ namespace Vänskap_Api.Service
 
         public async Task<bool> JoinEvent(int id)
         {
-            var result = await _context.Events.Include(e => e.EventParticipants).SingleOrDefaultAsync(e => e.Id == id);
+            var result = await _context.Events.Include(e => e.EventParticipants).Include(e => e.Conversation).SingleOrDefaultAsync(e => e.Id == id);
             var user = await _context.Users.SingleOrDefaultAsync(u => u.Id == UserId);
             var canJoin = false;
 
@@ -433,7 +455,15 @@ namespace Vänskap_Api.Service
                         EventId = result.Id
                     };
 
+                    var conversationParticipant = new ConversationParticipant()
+                    {
+                        UserId = UserId,
+                        Role = "Participant",
+                        ConversationId = result.ConversationId
+                    };
+
                     result.EventParticipants.Add(participant);
+                    result.Conversation?.ConversationParticipants.Add(conversationParticipant);
                     await _context.SaveChangesAsync();
 
                     return true;
@@ -467,7 +497,15 @@ namespace Vänskap_Api.Service
                         EventId = result.Id
                     };
 
+                    var conversationParticipant = new ConversationParticipant()
+                    {
+                        UserId = UserId,
+                        Role = "Participant",
+                        ConversationId = result.ConversationId
+                    };
+
                     result.EventParticipants.Add(participant);
+                    result.Conversation?.ConversationParticipants.Add(conversationParticipant);
                     await _context.SaveChangesAsync();
 
                     return true;
@@ -488,8 +526,19 @@ namespace Vänskap_Api.Service
             if (participant != null)
             {
                 result.EventParticipants.Remove(participant);
-                await _context.SaveChangesAsync();
+                var conversationParticipant = await _context.ConversationParticipants
+                    .SingleOrDefaultAsync(cp => cp.ConversationId == result.ConversationId && cp.UserId == UserId);
+                if (conversationParticipant != null)
+                {
+                    _context.ConversationParticipants.Remove(conversationParticipant);
+                }
+                else
+                {
+                    await _context.SaveChangesAsync();
+                    return false;
+                }
 
+                await _context.SaveChangesAsync();
                 return true;
             }
 
@@ -586,33 +635,33 @@ namespace Vänskap_Api.Service
             return events;
         }
 
-        public async Task<bool> SendMessage(int id, string text)
-        {
-            var evnt = await _context.Events
-                .Include(e => e.EventParticipants)
-                .FirstOrDefaultAsync(e => e.Id == id);
+        //public async Task<bool> SendMessage(int id, string text)
+        //{
+        //    var evnt = await _context.Events
+        //        .Include(e => e.EventParticipants)
+        //        .FirstOrDefaultAsync(e => e.Id == id);
 
-            if (evnt == null) return false;
+        //    if (evnt == null) return false;
 
-            var isParticipant = evnt.EventParticipants.Any(ep => ep.UserId == UserId);
-            if (!isParticipant) return false;
+        //    var isParticipant = evnt.EventParticipants.Any(ep => ep.UserId == UserId);
+        //    if (!isParticipant) return false;
 
-            var message = new Message()
-            {
-                Content = text,
-                SenderId = UserId
-            };
+        //    var message = new Message()
+        //    {
+        //        Content = text,
+        //        SenderId = UserId
+        //    };
 
-            if (message != null)
-            {
-                await _context.AddAsync(message);
-                await _context.SaveChangesAsync();
+        //    if (message != null)
+        //    {
+        //        await _context.AddAsync(message);
+        //        await _context.SaveChangesAsync();
 
-                return true;
-            }
+        //        return true;
+        //    }
 
-            return false;
-        }
+        //    return false;
+        //}
 
         //public async Task<IEnumerable<EventReceiveMessageDto>> GetEventMessages(int id)
         //{

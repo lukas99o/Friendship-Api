@@ -15,6 +15,7 @@ namespace Vänskap_Api.Models.Dtos.Event
         public int? AgeRangeMax { get; set; }
         public List<string>? Interests { get; set; }
         public List<EventParticipantDto>? EventParticipants { get; set; }
+        public List<EventMessageDto>? EventMessages { get; set; }
         public bool IsPublic { get; set; }
         public string? Img { get; set; }
         public int ConversationId { get; set; }
