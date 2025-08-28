@@ -27,6 +27,6 @@ namespace Vänskap_Api.Models
         public ApplicationUser? CreatedByUser { get; set; }
 
         public int ConversationId { get; set; }
-        public Conversation? Conversation { get; set; }
+        public Conversation Conversation { get; set; } = null!;
     }
 }

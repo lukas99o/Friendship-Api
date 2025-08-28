@@ -42,7 +42,7 @@ namespace Vänskap_Api.Controllers
             return Ok(await _friendshipService.SeeFriendList());
         }
 
-        [HttpGet("friendrequests")]
+        [HttpGet("friend-requests")]
         public async Task<ActionResult<GetFriendRequestsDto>> SeeFriendRequests()
         {
             return Ok(await _friendshipService.SeeFriendRequests());

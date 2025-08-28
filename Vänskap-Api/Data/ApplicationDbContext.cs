@@ -27,7 +27,8 @@ namespace Vänskap_Api.Data
             builder.Entity<Event>()
                 .HasOne(e => e.Conversation)
                 .WithOne(c => c.Event)
-                .HasForeignKey<Event>(e => e.ConversationId);
+                .HasForeignKey<Event>(e => e.ConversationId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<Friendship>()
                 .HasOne(f => f.User)

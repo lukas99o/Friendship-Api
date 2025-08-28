@@ -296,6 +296,7 @@ namespace Vänskap_Api.Service
                 .ThenInclude(ep => ep.User)
                 .Include(e => e.Conversation)
                 .ThenInclude(c => c.Messages)
+                .ThenInclude(m => m.Sender)
                 .FirstOrDefaultAsync(e => e.Id == id);
             if (result == null) return null;
 
@@ -327,9 +328,9 @@ namespace Vänskap_Api.Service
                         {
                             Content = m.Content,
                             SenderId = m.SenderId,
-                            SenderName = m.Sender?.UserName,
                             CreatedAt = m.CreatedAt,
-                            MessageId = m.Id
+                            MessageId = m.Id,
+                            SenderName = m.Sender?.UserName
                         }).ToList() ?? new List<EventMessageDto>()
                 };
 
@@ -370,9 +371,9 @@ namespace Vänskap_Api.Service
                         {
                             Content = m.Content,
                             SenderId = m.SenderId,
-                            SenderName = m.Sender?.UserName,
                             CreatedAt = m.CreatedAt,
-                            MessageId = m.Id
+                            MessageId = m.Id,
+                            SenderName = m.Sender?.UserName
                         }).ToList() ?? new List<EventMessageDto>()
                 };
 

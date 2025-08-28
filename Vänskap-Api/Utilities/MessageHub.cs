@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Vänskap_Api.Data;
 using Vänskap_Api.Models;
+using Vänskap_Api.Models.Dtos.Event;
 
 namespace Vänskap_Api.Utilities
 {
@@ -28,7 +29,7 @@ namespace Vänskap_Api.Utilities
 
         public async Task SendMessage(int conversationId, string senderId, string content)
         {
-            var participant = await _context.ConversationParticipants
+            var participant = await _context.ConversationParticipants.Include(cp => cp.User)
                 .FirstOrDefaultAsync(cp => cp.ConversationId == conversationId && cp.UserId == senderId);
 
             if (participant == null)
@@ -47,14 +48,17 @@ namespace Vänskap_Api.Utilities
             _context.Messages.Add(message);
             await _context.SaveChangesAsync();
 
+            var user = await _context.Users.FindAsync(senderId);
+
             await Clients.Group(conversationId.ToString()).SendAsync(
                 "ReceiveMessage",
                 new
                 {
-                    message.Id,
-                    message.Content,
-                    message.SenderId,
-                    message.CreatedAt
+                    MessageId = message.Id, 
+                    Content = message.Content,
+                    SenderId = message.SenderId,
+                    CreatedAt = message.CreatedAt,
+                    SenderName = user?.UserName ?? "Okänd"
                 });
         }
     }

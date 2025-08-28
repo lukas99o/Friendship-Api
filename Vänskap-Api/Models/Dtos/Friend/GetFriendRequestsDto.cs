@@ -2,7 +2,7 @@
 {
     public class GetFriendRequestsDto
     {
-        public List<string>? IncomingUserNames { get; set; }
-        public List<string>? OutgoingUserNames { get; set; }
+        public List<string>? IncomingUsernames { get; set; }
+        public List<string>? OutgoingUsernames { get; set; }
     }
 }

@@ -79,8 +79,8 @@ namespace Vänskap_Api.Service
 
             var friendsRequests = new GetFriendRequestsDto()
             {
-                IncomingUserNames = incomingRequests!,
-                OutgoingUserNames = outgoingRequests!
+                IncomingUsernames = incomingRequests!,
+                OutgoingUsernames = outgoingRequests!
             };
 
             return (friendsRequests);

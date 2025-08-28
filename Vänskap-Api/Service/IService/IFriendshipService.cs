@@ -5,7 +5,7 @@ namespace Vänskap_Api.Service.IService
 {
     public interface IFriendshipService
     {
-        Task<IEnumerable<string?>> SeeFriendList();
+        Task<IEnumerable<GetFriendsDto>> SeeFriendList();
         Task<bool> SendFriendRequest(string userName);
         Task<GetFriendRequestsDto> SeeFriendRequests();
         Task<bool> AcceptFriendRequest(int id);
