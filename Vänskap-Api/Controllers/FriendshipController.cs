@@ -24,7 +24,7 @@ namespace Vänskap_Api.Controllers
             var result = await _friendshipService.SendFriendRequest(username);
             if (!result) return BadRequest($"Could not find user with username: {username}.");
 
-            return Ok("Success");
+            return Ok();
         }
 
         [HttpPost("acceptfriendrequest/{id}")]
