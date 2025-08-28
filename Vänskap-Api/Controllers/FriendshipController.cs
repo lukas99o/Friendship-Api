@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Vänskap_Api.Models;
 using Vänskap_Api.Models.Dtos.Friend;
 using Vänskap_Api.Models.Dtos.User;
 using Vänskap_Api.Service.IService;
