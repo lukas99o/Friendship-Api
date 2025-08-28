@@ -18,11 +18,11 @@ namespace Vänskap_Api.Controllers
             _friendshipService = friendshipService;
         }
 
-        [HttpPost("sendfriendrequest")]
-        public async Task<IActionResult> SendFriendRequest(string userName)
+        [HttpPost("send-friend-request/{username}")]
+        public async Task<IActionResult> SendFriendRequest(string username)
         {
-            var result = await _friendshipService.SendFriendRequest(userName);
-            if (!result) return BadRequest($"Could not find user with username: {userName}.");
+            var result = await _friendshipService.SendFriendRequest(username);
+            if (!result) return BadRequest($"Could not find user with username: {username}.");
 
             return Ok("Success");
         }

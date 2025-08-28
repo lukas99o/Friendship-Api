@@ -251,7 +251,6 @@ namespace Vänskap_Api.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("EventId")
-                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
@@ -260,10 +259,7 @@ namespace Vänskap_Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EventId")
-                        .IsUnique();
-
-                    b.ToTable("Conversations");
+                    b.ToTable("Conversations", (string)null);
                 });
 
             modelBuilder.Entity("Vänskap_Api.Models.ConversationParticipant", b =>
@@ -294,7 +290,7 @@ namespace Vänskap_Api.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ConversationParticipants");
+                    b.ToTable("ConversationParticipants", (string)null);
                 });
 
             modelBuilder.Entity("Vänskap_Api.Models.Event", b =>
@@ -348,11 +344,14 @@ namespace Vänskap_Api.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ConversationId")
+                        .IsUnique();
+
                     b.HasIndex("CreatedByUserId");
 
                     b.HasIndex("InterestId");
 
-                    b.ToTable("Events");
+                    b.ToTable("Events", (string)null);
                 });
 
             modelBuilder.Entity("Vänskap_Api.Models.EventInterest", b =>
@@ -367,7 +366,7 @@ namespace Vänskap_Api.Migrations
 
                     b.HasIndex("InterestId");
 
-                    b.ToTable("EventInterest");
+                    b.ToTable("EventInterest", (string)null);
                 });
 
             modelBuilder.Entity("Vänskap_Api.Models.EventParticipant", b =>
@@ -398,7 +397,7 @@ namespace Vänskap_Api.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("EventParticipants");
+                    b.ToTable("EventParticipants", (string)null);
                 });
 
             modelBuilder.Entity("Vänskap_Api.Models.FriendRequest", b =>
@@ -426,7 +425,7 @@ namespace Vänskap_Api.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("FriendRequests");
+                    b.ToTable("FriendRequests", (string)null);
                 });
 
             modelBuilder.Entity("Vänskap_Api.Models.Friendship", b =>
@@ -459,7 +458,7 @@ namespace Vänskap_Api.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Friendships");
+                    b.ToTable("Friendships", (string)null);
                 });
 
             modelBuilder.Entity("Vänskap_Api.Models.Interest", b =>
@@ -476,7 +475,7 @@ namespace Vänskap_Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Interests");
+                    b.ToTable("Interests", (string)null);
 
                     b.HasData(
                         new
@@ -1009,7 +1008,7 @@ namespace Vänskap_Api.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("Messages");
+                    b.ToTable("Messages", (string)null);
                 });
 
             modelBuilder.Entity("Vänskap_Api.Models.MessageReadAt", b =>
@@ -1035,7 +1034,7 @@ namespace Vänskap_Api.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("MessageReadAt");
+                    b.ToTable("MessageReadAt", (string)null);
                 });
 
             modelBuilder.Entity("Vänskap_Api.Models.UserInterest", b =>
@@ -1050,7 +1049,7 @@ namespace Vänskap_Api.Migrations
 
                     b.HasIndex("InterestId");
 
-                    b.ToTable("UserInterest");
+                    b.ToTable("UserInterest", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1111,17 +1110,6 @@ namespace Vänskap_Api.Migrations
                         .HasForeignKey("InterestId");
                 });
 
-            modelBuilder.Entity("Vänskap_Api.Models.Conversation", b =>
-                {
-                    b.HasOne("Vänskap_Api.Models.Event", "Event")
-                        .WithOne("Conversation")
-                        .HasForeignKey("Vänskap_Api.Models.Conversation", "EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Event");
-                });
-
             modelBuilder.Entity("Vänskap_Api.Models.ConversationParticipant", b =>
                 {
                     b.HasOne("Vänskap_Api.Models.Conversation", "Conversation")
@@ -1143,6 +1131,12 @@ namespace Vänskap_Api.Migrations
 
             modelBuilder.Entity("Vänskap_Api.Models.Event", b =>
                 {
+                    b.HasOne("Vänskap_Api.Models.Conversation", "Conversation")
+                        .WithOne("Event")
+                        .HasForeignKey("Vänskap_Api.Models.Event", "ConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Vänskap_Api.Models.ApplicationUser", "CreatedByUser")
                         .WithMany("CreatedEvents")
                         .HasForeignKey("CreatedByUserId")
@@ -1152,6 +1146,8 @@ namespace Vänskap_Api.Migrations
                     b.HasOne("Vänskap_Api.Models.Interest", null)
                         .WithMany("Events")
                         .HasForeignKey("InterestId");
+
+                    b.Navigation("Conversation");
 
                     b.Navigation("CreatedByUser");
                 });
@@ -1310,14 +1306,13 @@ namespace Vänskap_Api.Migrations
                 {
                     b.Navigation("ConversationParticipants");
 
+                    b.Navigation("Event");
+
                     b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("Vänskap_Api.Models.Event", b =>
                 {
-                    b.Navigation("Conversation")
-                        .IsRequired();
-
                     b.Navigation("EventInterests");
 
                     b.Navigation("EventParticipants");

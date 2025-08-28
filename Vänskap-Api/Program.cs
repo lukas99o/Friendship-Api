@@ -121,11 +121,12 @@ namespace Vänskap_Api
                 {
                     var services = scope.ServiceProvider;
                     await SeedData.SeedAdminAsync(services);
+                    await SeedData.SeedTestUsers(services);
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ SeedAdminAsync misslyckades: {ex.Message}");
+                Console.WriteLine($"❌ SeedAdminAsync misslyckades eller SeedTestUsersAsync: {ex.Message}");
             }
 
             await app.RunAsync();
