@@ -86,18 +86,19 @@ namespace Vänskap_Api.Service
             return (friendsRequests);
         }
 
-        public async Task<bool> AcceptFriendRequest(int id)
+        public async Task<bool> AcceptFriendRequest(string username)
         {
-            var friendRequest = await _context.FriendRequests.FindAsync(id);
+            var friendRequest = await _context.FriendRequests
+                .Include(fr => fr.Sender)
+                .SingleOrDefaultAsync(fr => fr.Sender != null && fr.Sender.UserName == username && fr.ReceiverId == UserId);
 
-            if (friendRequest != null && friendRequest.ReceiverId == UserId)
+            if (friendRequest != null)
             {
                 var friendshipOne = new Friendship() { UserId = UserId, FriendId = friendRequest.SenderId };
                 var friendshipTwo = new Friendship() { UserId = friendRequest.SenderId, FriendId = UserId };
 
                 var user = await _context.Users.FindAsync(UserId);
                 var friend = await _context.Users.FindAsync(friendRequest.SenderId);
-
                 if (user == null || friend == null) return false;
 
                 user.Friendships.Add(friendshipOne);

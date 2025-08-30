@@ -28,11 +28,11 @@ namespace Vänskap_Api.Controllers
             return Ok();
         }
 
-        [HttpPost("acceptfriendrequest/{id}")]
-        public async Task<IActionResult> AcceptFriendRequest(int id)
+        [HttpPost("accept-friend-request/{username}")]
+        public async Task<IActionResult> AcceptFriendRequest(string username)
         {
-            var result = await _friendshipService.AcceptFriendRequest(id);
-            if (!result) return BadRequest("No friend request with the given id.");
+            var result = await _friendshipService.AcceptFriendRequest(username);
+            if (!result) return BadRequest("No friend request with the given username.");
 
             return Ok("Accepted friend request.");
         }
