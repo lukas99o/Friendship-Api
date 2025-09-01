@@ -95,7 +95,7 @@ namespace Vänskap_Api.Controllers
             await _userManager.AddToRoleAsync(user, "User");
 
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            var confirmationLink = $"http://localhost:5173/confirm-email?userId={user.Id}&token={Uri.EscapeDataString(token)}";
+            var confirmationLink = $"https://ashy-stone-09b187203.2.azurestaticapps.net/confirm-email?userId={user.Id}&token={Uri.EscapeDataString(token)}";
             var htmlTemplate = await System.IO.File.ReadAllTextAsync("EmailTemplates/ConfirmEmail.html");
             var htmlBody = htmlTemplate
                 .Replace("{FirstName}", user.FirstName)
@@ -105,7 +105,7 @@ namespace Vänskap_Api.Controllers
 
             return Ok("Registrering lyckades");
         }
-
+        
         [HttpPost("resend-email")]
         public async Task<IActionResult> ResendConfirmationLink(string email)
         {
@@ -118,7 +118,7 @@ namespace Vänskap_Api.Controllers
             else
             {
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                var confirmationLink = $"http://localhost:5173/confirm-email?userId={user.Id}&token={Uri.EscapeDataString(token)}";
+                var confirmationLink = $"https://ashy-stone-09b187203.2.azurestaticapps.net/confirm-email?userId={user.Id}&token={Uri.EscapeDataString(token)}";
                 var htmlTemplate = await System.IO.File.ReadAllTextAsync("EmailTemplates/ConfirmEmail.html");
                 var htmlBody = htmlTemplate
                     .Replace("{FirstName}", user.FirstName)
