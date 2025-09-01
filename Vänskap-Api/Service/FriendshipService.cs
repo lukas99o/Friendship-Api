@@ -114,9 +114,12 @@ namespace Vänskap_Api.Service
             return false;
         }
 
-        public async Task<bool> DeclineFriendRequest(int id)
+        public async Task<bool> DeclineFriendRequest(string username)
         {
-            var friendRequest = await _context.FriendRequests.FindAsync(id);
+            var friendRequest = await _context.FriendRequests
+               .Include(fr => fr.Sender)
+               .SingleOrDefaultAsync(fr => fr.Sender != null && fr.Sender.UserName == username && fr.ReceiverId == UserId);
+
             if (friendRequest == null) return false;
 
             if (friendRequest.ReceiverId == UserId)
@@ -125,8 +128,7 @@ namespace Vänskap_Api.Service
                 await _context.SaveChangesAsync();
                 return true;
             }
-
-            return false;
+            else return false;
         }
 
         public async Task<bool> RemoveFriend(string userName)
@@ -144,10 +146,11 @@ namespace Vänskap_Api.Service
             return true;
         }
 
-        public async Task<bool> RemoveFriendRequest(int id)
+        public async Task<bool> RemoveFriendRequest(string username)
         {
-            var friendRequest = await _context.FriendRequests.FindAsync(id);
-            if (friendRequest == null) return false;
+            var friendRequest = await _context.FriendRequests
+                .Include(fr => fr.Sender)
+                .SingleOrDefaultAsync(fr => fr.Sender != null && fr.Sender.UserName == username && fr.ReceiverId == UserId); if (friendRequest == null) return false;
 
             if (friendRequest.SenderId == UserId)
             {
@@ -155,8 +158,7 @@ namespace Vänskap_Api.Service
                 await _context.SaveChangesAsync();
                 return true;
             }
-
-            return false;
+            else return false;
         }
     }
 }

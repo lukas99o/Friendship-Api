@@ -58,19 +58,19 @@ namespace Vänskap_Api.Controllers
             return Ok(result);
         }
 
-        [HttpDelete("declinefriendrequest/{id}")]
-        public async Task<IActionResult> DeclineFriendRequest(int id)
+        [HttpDelete("decline-friend-request/{username}")]
+        public async Task<IActionResult> DeclineFriendRequest(string username)
         {
-            var result = await _friendshipService.DeclineFriendRequest(id);
+            var result = await _friendshipService.DeclineFriendRequest(username);
             if (!result) return BadRequest(result);
 
             return Ok(result);
         }
 
-        [HttpDelete("regretfriendrequest/{id}")]
-        public async Task<IActionResult> RemoveFriendRequest(int id)
+        [HttpDelete("regret-friend-request/{username}")]
+        public async Task<IActionResult> RemoveFriendRequest(string username)
         {
-            var result = await _friendshipService.RemoveFriendRequest(id);
+            var result = await _friendshipService.RemoveFriendRequest(username);
             if (!result) return BadRequest();
 
             return Ok(result);

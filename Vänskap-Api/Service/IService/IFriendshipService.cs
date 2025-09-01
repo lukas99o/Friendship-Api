@@ -9,8 +9,8 @@ namespace Vänskap_Api.Service.IService
         Task<bool> SendFriendRequest(string username);
         Task<GetFriendRequestsDto> SeeFriendRequests();
         Task<bool> AcceptFriendRequest(string username);
-        Task<bool> DeclineFriendRequest(int id);
+        Task<bool> DeclineFriendRequest(string username);
         Task<bool> RemoveFriend(string friendId);
-        Task<bool> RemoveFriendRequest(int id);
+        Task<bool> RemoveFriendRequest(string username);
     }
 }
