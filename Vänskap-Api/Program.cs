@@ -27,7 +27,7 @@ namespace Vänskap_Api
             {
                 options.AddPolicy("AllowFrontend", policy =>
                 {
-                    policy.WithOrigins("http://localhost:5173")
+                    policy.WithOrigins("https://ashy-stone-09b187203.2.azurestaticapps.net")
                         .AllowAnyHeader()
                         .AllowAnyMethod()
                         .AllowCredentials();
@@ -91,8 +91,12 @@ namespace Vänskap_Api
                 };
             });
 
-            builder.Services.AddSignalR();
+            builder.WebHost.ConfigureKestrel(serverOptions =>
+            {
+                serverOptions.ListenAnyIP(8080);
+            });
 
+            builder.Services.AddSignalR();
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<IEventService, EventService>();
             builder.Services.AddScoped<IFriendshipService, FriendshipService>();
