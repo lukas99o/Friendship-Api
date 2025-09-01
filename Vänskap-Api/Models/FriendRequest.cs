@@ -11,10 +11,10 @@ namespace Vänskap_Api.Models
 
         [ForeignKey("Sender")]
         public required string SenderId { get; set; }
-        public ApplicationUser? Sender { get; set; }
+        public ApplicationUser Sender { get; set; } = null!;
 
         [ForeignKey("Receiver")]
-        public required string ReceiverId { get; set; }
-        public ApplicationUser? Receiver { get; set; }
+        public string ReceiverId { get; set; }
+        public ApplicationUser Receiver { get; set; } = null!;
     }
 }

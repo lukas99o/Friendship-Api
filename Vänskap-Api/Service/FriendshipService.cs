@@ -43,13 +43,16 @@ namespace Vänskap_Api.Service
             return friendListDto ?? new List<GetFriendsDto>();
         }
 
-        public async Task<bool> SendFriendRequest(string userName)
+        public async Task<bool> SendFriendRequest(string username)
         {
-            var friend = await _context.Users.SingleOrDefaultAsync(u => u.UserName == userName);
+            var friend = await _context.Users.Include(u => u.Friendships).SingleOrDefaultAsync(u => u.UserName == username);
             if (friend == null) return false;
 
-            var isSent = await _context.FriendRequests.SingleOrDefaultAsync(u => u.SenderId == UserId && u.ReceiverId == friend.Id);
+            var isSent = await _context.FriendRequests.SingleOrDefaultAsync
+                (u => u.SenderId == UserId && u.ReceiverId == friend.Id || u.SenderId == friend.Id && u.ReceiverId == UserId);
             if (isSent != null) return false;
+
+            if (friend.Friendships.Any(f => f.FriendId == UserId)) return false;
 
             var friendRequest = new FriendRequest()
             {
@@ -59,7 +62,6 @@ namespace Vänskap_Api.Service
 
             await _context.AddAsync(friendRequest);
             await _context.SaveChangesAsync();
-
             return true;
         }
 
@@ -90,7 +92,7 @@ namespace Vänskap_Api.Service
         {
             var friendRequest = await _context.FriendRequests
                 .Include(fr => fr.Sender)
-                .SingleOrDefaultAsync(fr => fr.Sender != null && fr.Sender.UserName == username && fr.ReceiverId == UserId);
+                .SingleOrDefaultAsync(fr => fr.Sender.UserName == username && fr.ReceiverId == UserId);
 
             if (friendRequest != null)
             {
@@ -118,7 +120,7 @@ namespace Vänskap_Api.Service
         {
             var friendRequest = await _context.FriendRequests
                .Include(fr => fr.Sender)
-               .SingleOrDefaultAsync(fr => fr.Sender != null && fr.Sender.UserName == username && fr.ReceiverId == UserId);
+               .SingleOrDefaultAsync(fr => fr.Sender.UserName == username && fr.ReceiverId == UserId);
 
             if (friendRequest == null) return false;
 
@@ -149,8 +151,9 @@ namespace Vänskap_Api.Service
         public async Task<bool> RemoveFriendRequest(string username)
         {
             var friendRequest = await _context.FriendRequests
-                .Include(fr => fr.Sender)
-                .SingleOrDefaultAsync(fr => fr.Sender != null && fr.Sender.UserName == username && fr.ReceiverId == UserId); if (friendRequest == null) return false;
+                .Include(fr => fr.Receiver)
+                .SingleOrDefaultAsync(fr => fr.Receiver.UserName == username && fr.SenderId == UserId); 
+            if (friendRequest == null) return false;
 
             if (friendRequest.SenderId == UserId)
             {
