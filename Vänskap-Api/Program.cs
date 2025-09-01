@@ -119,6 +119,12 @@ namespace Vänskap_Api
             app.MapControllers();
             app.MapHub<MessageHub>("/messageHub");
 
+            using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                db.Database.Migrate();
+            }
+
             try
             {
                 using (var scope = app.Services.CreateScope())
