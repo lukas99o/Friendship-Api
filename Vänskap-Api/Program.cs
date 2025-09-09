@@ -27,7 +27,7 @@ namespace Vänskap_Api
             {
                 options.AddPolicy("AllowFrontend", policy =>
                 {
-                    policy.WithOrigins("http://localhost:5173")
+                    policy.WithOrigins(Environment.GetEnvironmentVariable("BaseUrl")!)
                         .AllowAnyHeader()
                         .AllowAnyMethod()
                         .AllowCredentials();
@@ -64,7 +64,7 @@ namespace Vänskap_Api
             });
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Environment.GetEnvironmentVariable("ConnectionString")));
+                  options.UseSqlServer(Environment.GetEnvironmentVariable("ConnectionString")));
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>().
                 AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
             builder.Services.Configure<IdentityOptions>(options =>
