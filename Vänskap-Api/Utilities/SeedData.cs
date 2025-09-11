@@ -59,7 +59,8 @@ namespace Vänskap_Api.Utilities
                 new ApplicationUser { FirstName = "Per", LastName = "Larsson", UserName = "per.larsson", Email = "per.larsson@test.com", DateOfBirth = new DateOnly(1989, 7, 19) },
                 new ApplicationUser { FirstName = "Sofia", LastName = "Olsson", UserName = "sofia.olsson", Email = "sofia.olsson@test.com", DateOfBirth = new DateOnly(1994, 5, 8) },
                 new ApplicationUser { FirstName = "Mattias", LastName = "Pettersson", UserName = "mattias.pettersson", Email = "mattias.pettersson@test.com", DateOfBirth = new DateOnly(1990, 12, 1) },
-                new ApplicationUser { FirstName = "Elin", LastName = "Berg", UserName = "elin.berg", Email = "elin.berg@test.com", DateOfBirth = new DateOnly(1996, 4, 16) }
+                new ApplicationUser { FirstName = "Elin", LastName = "Berg", UserName = "elin.berg", Email = "elin.berg@test.com", DateOfBirth = new DateOnly(1996, 4, 16) },
+                new ApplicationUser { FirstName = "Test", LastName = "Test", UserName = "IAmTest", Email = "iamtest@test.com", DateOfBirth = new DateOnly(2000, 1, 1) }
             };
 
             foreach (var user in testUsers)
