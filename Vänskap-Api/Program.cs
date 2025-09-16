@@ -118,6 +118,7 @@ namespace Vänskap_Api
 
             app.MapControllers();
             app.MapHub<MessageHub>("/messageHub");
+            app.MapGet("/ping", () => Results.Ok("pong"));
 
             try
             {

@@ -37,7 +37,8 @@ namespace Vänskap_Api.Service
             {
                 Username = f.UserName,
                 Name = f.FirstName + " " + f.LastName,
-                Age = f.DateOfBirth
+                Age = f.DateOfBirth,
+                UserId = f.Id
             }).ToList();
             
             return friendListDto ?? new List<GetFriendsDto>();

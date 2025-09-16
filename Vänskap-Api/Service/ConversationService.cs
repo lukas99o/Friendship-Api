@@ -4,6 +4,7 @@ using Vänskap_Api.Service.IService;
 using System.Security.Claims;
 using Vänskap_Api.Data;
 using Vänskap_Api.Models.Dtos.Conversation;
+using System.Runtime.InteropServices;
 
 namespace Vänskap_Api.Service
 {
@@ -19,65 +20,117 @@ namespace Vänskap_Api.Service
             _contextAccessor = contextAccessor;
         }
 
-        public async Task<bool> StartConversation(List<string> userNames)
+        public async Task<SeeConversationDto?> StartPrivateConversation(string username)
         {
-            var user = await _context.Users.Include(f => f.Friendships)
-                .ThenInclude(f => f.Friend).SingleOrDefaultAsync(u => u.Id == UserId);
+            var user = await _context.Users
+                .Include(f => f.Friendships)
+                .ThenInclude(f => f.Friend)
+                .SingleOrDefaultAsync(u => u.Id == UserId);
 
-            if (user == null || userNames.Count < 1) return false;
+            var friend = await _context.Users
+                .Include(f => f.Friendships)
+                .ThenInclude(f => f.Friend)
+                .SingleOrDefaultAsync(u => u.UserName == username);
 
-            var friendUserNames = user.Friendships
-                .Select(f => f.Friend?.UserName).ToList();
+            if (user == null || friend == null)
+                return null;
 
-            var allAreFriends = userNames.All(u => friendUserNames.Contains(u));
-            if (!allAreFriends) return false;
+            var areFriends = await _context.Friendships.AnyAsync(fs =>
+                (fs.UserId == user.Id && fs.FriendId == friend.Id) ||
+                (fs.UserId == friend.Id && fs.FriendId == user.Id)
+            );
 
-            var friendNames = user.Friendships.Select(f => f.Friend?.FirstName).ToList();
-            var friends = user.Friendships.ToList();
+            if (!areFriends)
+                return null;
 
-            if (friends.Count > 0)
+            var existingConversation = await _context.Conversations
+                .Include(c => c.ConversationParticipants)
+                .Include(c => c.Messages)
+                .ThenInclude(m => m.Sender)
+                .FirstOrDefaultAsync(c =>
+                    c.ConversationParticipants.Count == 2 &&
+                    c.ConversationParticipants.Any(cp => cp.UserId == user.Id) &&
+                    c.ConversationParticipants.Any(cp => cp.UserId == friend.Id)
+                );
+
+            if (existingConversation != null)
             {
-                if (friendNames.Count() > 0)
+                return new SeeConversationDto
                 {
-                    var participants = new List<ConversationParticipant>();
-                    var conversation = new Conversation() { Title = $"{user.FirstName}, {string.Join(", ", friendNames)}" };
-
-                    await _context.AddAsync(conversation);
-                    await _context.SaveChangesAsync();
-
-                    participants.Add(new ConversationParticipant
+                    ConversationId = existingConversation.Id,
+                    Title = existingConversation.Title,
+                    Messages = existingConversation.Messages.Select(m => new ConversationMessageDto
                     {
-                        UserId = UserId,
-                        ConversationId = conversation.Id,
-                        Role = "Host"
-                    });
-                    participants.AddRange(friends.Select(f => new ConversationParticipant
+                        MessageId = m.Id,
+                        Content = m.Content,
+                        SenderId = m.SenderId,
+                        CreatedAt = m.CreatedAt,
+                        SenderName = m.Sender != null ? m.Sender.UserName : "[Unknown user]"
+                    }),
+                    CreatedAt = existingConversation.CreatedAt,
+                    ConversationParticipants = existingConversation.ConversationParticipants.Select(cp => new ConversationParticipantDto
                     {
-                        UserId = f.FriendId,
-                        ConversationId = conversation.Id
-                    }));
-
-                    conversation.ConversationParticipants = participants;
-
-                    _context.Update(conversation);
-                    await _context.SaveChangesAsync();
-
-                    return true;
-                }
+                        UserId = cp.UserId,
+                        ConversationId = cp.ConversationId
+                    })
+                };
             }
 
-            return false;
+            var conversation = new Conversation
+            {
+                Title = $"{user.FirstName}, {friend.FirstName}"
+            };
+
+            conversation.ConversationParticipants.Add(new ConversationParticipant { UserId = user.Id });
+            conversation.ConversationParticipants.Add(new ConversationParticipant { UserId = friend.Id });
+
+            _context.Conversations.Add(conversation);
+            await _context.SaveChangesAsync();
+
+            return new SeeConversationDto
+            {
+                ConversationId = conversation.Id,
+                Title = conversation.Title,
+                Messages = Array.Empty<ConversationMessageDto>(),
+                CreatedAt = conversation.CreatedAt,
+                ConversationParticipants = conversation.ConversationParticipants.Select(cp => new ConversationParticipantDto
+                {
+                    UserId = cp.UserId,
+                    ConversationId = cp.ConversationId
+                })
+            };
         }
 
-        public async Task<IEnumerable<string>> SeeAllConversations()
+        public async Task<IEnumerable<SeeConversationDto>> SeeAllConversations()
         {
             var userConversations = await _context.Conversations
-                .Include(c => c.ConversationParticipants)
                 .Where(c => c.ConversationParticipants.Any(cp => cp.UserId == UserId))
-                .Select(c => c.Title)
+                .Include(c => c.Messages)
+                    .ThenInclude(m => m.Sender)
+                .Include(c => c.ConversationParticipants)
                 .ToListAsync();
 
-            return userConversations;
+            var conversationDtos = userConversations.Select(conversation => new SeeConversationDto
+            {
+                ConversationId = conversation.Id,
+                Title = conversation.Title,
+                Messages = conversation.Messages.Select(m => new ConversationMessageDto
+                {
+                    MessageId = m.Id,
+                    Content = m.Content,
+                    SenderId = m.SenderId,
+                    CreatedAt = m.CreatedAt,
+                    SenderName = m.Sender != null ? m.Sender.UserName : "[Unknown user]"
+                }),
+                CreatedAt = conversation.CreatedAt,
+                ConversationParticipants = conversation.ConversationParticipants.Select(cp => new ConversationParticipantDto
+                {
+                    UserId = cp.UserId,
+                    ConversationId = cp.ConversationId
+                })
+            });
+
+            return conversationDtos;
         }
 
         public async Task<SeeConversationDto?> SeeConversation(int id)
@@ -91,11 +144,50 @@ namespace Vänskap_Api.Service
 
             var seeConversation = new SeeConversationDto
             {
+                ConversationId = conversation.Id,
                 Title = conversation.Title,
-                Messages = conversation.Messages.Select(m => m.Content).ToList()
+                Messages = conversation.Messages.Select(m => new ConversationMessageDto
+                {
+                    MessageId = m.Id,
+                    Content = m.Content,
+                    SenderId = m.SenderId,
+                    CreatedAt = m.CreatedAt,
+                    SenderName = m.Sender != null ? m.Sender.UserName : "[Unknown user]"
+                }),
+                CreatedAt = conversation.CreatedAt,
+                ConversationParticipants = conversation.ConversationParticipants.Select(cp => new ConversationParticipantDto
+                {
+                    UserId = cp.UserId,
+                    ConversationId = cp.ConversationId
+                })
             };
 
             return seeConversation;
+        }
+
+        public async Task<IEnumerable<ConversationMessageDto>> GetConversationMessages(int id)
+        {
+            var conversation = await _context.Conversations
+                .Where(c => c.ConversationParticipants.Any(cp => cp.UserId == UserId) && c.Id == id)
+                .Include(c => c.Messages)
+                    .ThenInclude(m => m.Sender) 
+                .SingleOrDefaultAsync(c => c.Id == id);
+
+            if (conversation == null)
+                return Enumerable.Empty<ConversationMessageDto>();
+
+            var conversationMessagesDto = conversation.Messages
+                .OrderBy(m => m.CreatedAt) 
+                .Select(m => new ConversationMessageDto
+                {
+                    MessageId = m.Id,
+                    Content = m.Content,
+                    SenderId = m.SenderId,
+                    CreatedAt = m.CreatedAt,
+                    SenderName = m.Sender != null ? m.Sender.UserName : "[Unknown user]"
+                });
+
+            return conversationMessagesDto;
         }
 
         public async Task<bool> EditConversationTitle(int id, string title)

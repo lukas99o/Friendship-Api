@@ -17,17 +17,17 @@ namespace Vänskap_Api.Controllers
             _conversationService = conversationService;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> StartConversation(List<string> userNames)
+        [HttpPost("start-private-conversation/{username}")]
+        public async Task<ActionResult<SeeConversationDto>> StartPrivateConversation(string username)
         {
-            var result = await _conversationService.StartConversation(userNames);
-            if (!result) return BadRequest();
+            var result = await _conversationService.StartPrivateConversation(username);
+            if (result == null) return BadRequest();
 
-            return Ok("Success");
+            return Ok(result);
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<string>>> SeeAllConversations()
+        public async Task<ActionResult<IEnumerable<SeeConversationDto>>> SeeAllConversations()
         {
             var result = await _conversationService.SeeAllConversations();
 
@@ -40,6 +40,13 @@ namespace Vänskap_Api.Controllers
             var result = await _conversationService.SeeConversation(id);
             if (result == null) return BadRequest("Could not find or access the conversation.");
 
+            return Ok(result);
+        }
+
+        [HttpGet("get-conversation-messages/{id}")]
+        public async Task<ActionResult<ConversationMessageDto>> GetConversationMessages(int id)
+        {
+            var result = await _conversationService.GetConversationMessages(id);
             return Ok(result);
         }
 
