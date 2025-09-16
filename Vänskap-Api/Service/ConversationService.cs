@@ -50,7 +50,8 @@ namespace Vänskap_Api.Service
                 .FirstOrDefaultAsync(c =>
                     c.ConversationParticipants.Count == 2 &&
                     c.ConversationParticipants.Any(cp => cp.UserId == user.Id) &&
-                    c.ConversationParticipants.Any(cp => cp.UserId == friend.Id)
+                    c.ConversationParticipants.Any(cp => cp.UserId == friend.Id) &&
+                    c.EventId == null
                 );
 
             if (existingConversation != null)
