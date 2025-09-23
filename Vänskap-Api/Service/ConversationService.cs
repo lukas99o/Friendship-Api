@@ -8,11 +8,11 @@ using System.Runtime.InteropServices;
 
 namespace Vänskap_Api.Service
 {
-    public class ConversationService : IConversationService
+    public class ConversationService : IConversationService 
     {
         private readonly ApplicationDbContext _context;
         private readonly IHttpContextAccessor _contextAccessor;
-        private string UserId => _contextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? throw new ArgumentNullException(nameof(UserId));
+        public string UserId => _contextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? throw new ArgumentNullException(nameof(UserId));
 
         public ConversationService(ApplicationDbContext context, IHttpContextAccessor contextAccessor)
         {
@@ -47,7 +47,7 @@ namespace Vänskap_Api.Service
                 .Include(c => c.ConversationParticipants)
                 .Include(c => c.Messages)
                 .ThenInclude(m => m.Sender)
-                .FirstOrDefaultAsync(c =>
+                .SingleOrDefaultAsync(c =>
                     c.ConversationParticipants.Count == 2 &&
                     c.ConversationParticipants.Any(cp => cp.UserId == user.Id) &&
                     c.ConversationParticipants.Any(cp => cp.UserId == friend.Id) &&
