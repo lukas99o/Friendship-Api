@@ -24,11 +24,11 @@ namespace Vänskap_Api.Data
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<Event>()
-                .HasOne(e => e.Conversation)
-                .WithOne(c => c.Event)
-                .HasForeignKey<Event>(e => e.ConversationId)
-                .OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<Conversation>()
+                .HasOne(c => c.Event)          
+                .WithOne(e => e.Conversation)  
+                .HasForeignKey<Conversation>(c => c.EventId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Friendship>()
                 .HasOne(f => f.User)
