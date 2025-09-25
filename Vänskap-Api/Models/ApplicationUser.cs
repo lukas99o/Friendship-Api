@@ -8,6 +8,7 @@ namespace Vänskap_Api.Models
         public required string FirstName { get; set; }
         public required string LastName { get; set; }
         public DateOnly DateOfBirth { get; set; }
+        public string? About { get; set; }
         public ICollection<UserInterest>? UserInterests { get; set; } = new List<UserInterest>();
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
@@ -16,5 +17,6 @@ namespace Vänskap_Api.Models
         public ICollection<ConversationParticipant> ConversationParticipations { get; set; } = new List<ConversationParticipant>();
         public ICollection<Friendship> Friendships { get; set; } = new List<Friendship>();
         public ICollection<MessageReadAt> ReadMessages { get; set; } = new List<MessageReadAt>();
+        public string? ProfilePicturePath { get; set; }
     }
 }
