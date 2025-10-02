@@ -60,6 +60,8 @@ namespace Vänskap_Api
                         new string[] { } 
                     }
                 });
+
+                c.OperationFilter<SwaggerFileOperationFilter>();
             });
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -100,6 +102,7 @@ namespace Vänskap_Api
             builder.Services.AddScoped<IEventService, EventService>();
             builder.Services.AddScoped<IFriendshipService, FriendshipService>();
             builder.Services.AddScoped<IConversationService, ConversationService>();
+            builder.Services.AddScoped<IUserService, UserService>();
 
             var app = builder.Build();
 
@@ -111,6 +114,7 @@ namespace Vänskap_Api
             }
 
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
             app.UseCors("AllowFrontend");
             app.UseAuthentication();
             app.UseAuthorization();

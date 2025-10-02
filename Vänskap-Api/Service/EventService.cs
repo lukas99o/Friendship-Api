@@ -131,11 +131,11 @@ namespace Vänskap_Api.Service
             if (interests != null)
             {
                 interestIds = await _context.Interests
-                .Where(i => interests.Contains(i.Name))
-                .Select(i => i.Id)
-                .ToListAsync();
+                    .Where(i => interests.Contains(i.Name))
+                    .Select(i => i.Id)
+                    .ToListAsync();
             }
-            
+
             if (ageMin != null && ageMax != null)
             {
                 if (ageMin > ageMax) return new List<ReadEventDto>();
@@ -153,7 +153,7 @@ namespace Vänskap_Api.Service
 
             if (interests != null && interests.Any(i => !string.IsNullOrEmpty(i)))
             {
-                query = query.Where(e => e.EventInterests!.Any(i => interestIds.Contains(i.EventId)));
+                query = query.Where(e => e.EventInterests!.Any(i => interestIds.Contains(i.InterestId)));
             }
 
             var result = await query.ToListAsync();
